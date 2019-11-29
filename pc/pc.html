@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            *{padding:0; margin: 0}
+            html,body{
+                width: 100%;
+                height: 100%;
+            }
+            .bgimg{
+                position: fixed;
+                width: 100%;
+                height: 100%;
+                background: url("./img/bgimg.png");
+                background-repeat: no-repeat;
+                background-size: cover;
+            }
+            .center{
+                /* width: 1200px; */
+                height: 100%;
+                margin: auto;
+                /* background: red; */
+                
+            }
+            .main{
+                width: 450px;
+                height: 202px;
+                margin: 0 auto;
+                position: relative;
+                top: 50%;
+                transform: translateY(-50%);
+               
+            }
+            .logo{
+                position:absolute;
+                top: 0px;
+                left:0px;
+                width: 161px;
+                height:135px;
+                background: url("./img/logo.png");
+                background-repeat: no-repeat;
+                background-size: cover;
+            }
+            .title{
+                position: absolute;
+                top: 147px;
+                left: 16px;
+                width: 128px;
+                height: 38px;
+                background: url("./img/Catr.png");
+                background-repeat: no-repeat;
+                background-size: cover;
+            }
+            .ios{
+                position: absolute;
+                top: 35px;
+                left: 213px;
+                width: 237px;
+                height: 70px;
+                background: url("./img/ios_1.png");
+                background-repeat: no-repeat;
+                background-size: cover;
+            }
+            .android{
+                position: absolute;
+                top: 113px;
+                left: 213px;
+                width: 237px;
+                height: 70px;
+                background: url("./img/android_1.png");
+                background-repeat: no-repeat;
+                background-size: cover;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="bgimg">
+            <div class="center">
+                <div class="main">
+                    <div class="logo"></div>
+                    <div class="title"></div>
+                    <div class="ios" onclick="goIos()"></div>
+                    <div class="android" onclick="goAndroid()"></div>
+                </div>
+            </div>
+        </div>
+    </body>
+
+    <script>
+        function goIos(){
+            // alert(111);
+        }
+        function goAndroid(){
+            // alert(222);
+        }
+    </script>
+</html>

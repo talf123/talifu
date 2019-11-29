@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<script type="text/javascript">
+    function browserRedirect() {
+  var sUserAgent = navigator.userAgent.toLowerCase();
+  if (/ipad|iphone|midp|rv:1.2.3.4|ucweb|android|windows ce|windows mobile/.test(sUserAgent)) {
+  //跳转移动端页面
+  window.location.href="h5.html"; rel="external nofollow";
+  } else {
+  //跳转pc端页面
+  window.location.href="pc.html";
+  }
+ }
+    browserRedirect(); 
+</script>
+<body>
+    
+</body>
+</html>
