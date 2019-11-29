@@ -1,0 +1,646 @@
+<template>
+  <div class="content">
+    <silderBar></silderBar>
+    <div class="body_main">
+        <navBar></navBar>
+        <div class="main" :style="widthMain">
+            <div class="tips" id="{this.$route.name}">
+                <Breadcrumb separator="<b class='demo-breadcrumb-separator'>=></b>">
+                    <BreadcrumbItem :to="item.path" v-for="(item,index) in this.$route.meta.index" :key="index">{{item.name}}</BreadcrumbItem>
+                </Breadcrumb>
+            </div>
+            <!-- 查询 新增 -->
+            <div class="top">
+                <label>类型：</label>
+                <Select v-model="type" size="small" style="width:150px">
+                    <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                </Select>
+                <Button type="primary" size="small" @click="lookup">开始审核</Button>
+            </div>
+            <!-- 主页面内容 -->
+            <div class="center" >
+                <Row style="background:#eee;padding:30px;">
+                    <Col span="5" style="margin-right:40px; margin-top: 20px;" v-for="item in videos" :key="item.useridx" :label="item.useridx">
+                        <Card :bordered="false">
+                            <span><img :src='item.photo'></img></span>
+                            <p>{{item.nickname}}</p>
+                            <p><span style="background-color:#00CC95; margin-right: 10px; border-radius:10px; padding-top: 3px; padding-bottom: 2px; padding-left: 3px; padding-right: 5px;"><img src="../../../assets/img/zuanshi.png" style="width:20px;height:18px; margin-right: 5px;"></img>{{item.anchorLevel}}</span>({{item.useridx}})</p>
+                            <Button type="primary" size="small" @click="blacklist(item.useridx)">拉黑</Button>
+                            <Button type="primary" size="small" @click="driveout(item.useridx)">踢出</Button>
+                            <Button type="primary" size="small" @click="locking(item.useridx)">锁头像</Button>
+                            <Button type="primary" size="small" @click="warning(item.useridx)" style="width:80%; margin-top: 5px;">发送警告</Button>
+                        </Card>
+                    </Col>
+                </Row>
+            </div>
+            <!-- 遮罩层 -->
+            <div class="marsk" v-if="showNone"></div>
+            <!-- 拉入黑名单 -->
+            <div class="pop1" v-if="showblacklist">
+                <h1>直播审核</h1>
+                <span style="display:block;font-size:15px; margin-top:25px;"><label>用户ID：</label><span>{{useridx}}</span></span>
+                <span style="display:block;font-size:15px; margin-top:25px;">
+                    <label>时间：</label>
+                    <Select v-model="time" clearable style="width:150px" size="small">
+                        <Option v-for="item in times" :value="item.value" :key="item.value" :label="item.label"></Option>
+                    </Select>
+                </span>
+                <span style="display:block;font-size:15px; margin-top:25px;">
+                    <label>备注：</label>
+                    <Select v-model="rem" clearable style="width:150px" size="small">
+                        <Option v-for="item in remarks" :value="item.value" :key="item.value" :label="item.label"></Option>
+                    </Select>
+                </span>
+                <span style="display:block; margin-top: 30px;">
+                    <Button type="primary" @click="blacklistadd()">加入黑名单</Button>
+                    <Button style="margin-left: 25px;" @click="close()">关闭</Button>
+                </span>
+            </div>
+            <!-- 踢出房间 -->
+            <div class="pop1" v-if="showdriveout">
+                <h1>直播审核</h1>
+                <span style="display:block;font-size:15px; margin-top:25px;"><label>用户ID：</label><span>{{useridx}}</span></span>
+                <span style="display:block;font-size:15px; margin-top:25px;">
+                    <label>时间：</label>
+                    <Select v-model="time" clearable style="width:150px" size="small">
+                        <Option v-for="item in times1" :value="item.value" :key="item.value" :label="item.label"></Option>
+                    </Select>
+                </span>
+                <span style="display:block;font-size:15px; margin-top:25px;">
+                    <label>备注：</label>
+                    <Select v-model="rem" clearable style="width:150px" size="small">
+                        <Option v-for="item in remarks" :value="item.value" :key="item.value" :label="item.label"></Option>
+                    </Select>
+                </span>
+                <span style="display:block; margin-top: 30px;">
+                    <Button type="primary" @click="driveoutadd()">踢出房间</Button>
+                    <Button style="margin-left: 25px;" @click="close()">关闭</Button>
+                </span>
+            </div>
+            <!-- 锁头像 -->
+            <div class="pop2" v-if="showlocking">
+                <h1>确认锁定头像?</h1>
+                <span style="display:block; margin-top: 30px;">
+                    <Button type="primary" @click="lockingadd()">确认</Button>
+                    <Button style="margin-left: 35px;" @click="close()">取消</Button>
+                </span>
+            </div>
+            <!-- 视频墙发警告 -->
+            <div class="pop2" v-if="showwarning">
+                <h1>确认发送警告吗?</h1>
+                <span style="display:block; margin-top: 30px;">
+                    <Button type="primary" @click="warningadd()">确认</Button>
+                    <Button style="margin-left: 35px;" @click="close()">取消</Button>
+                </span>
+            </div>
+            <!-- 分页页面 -->
+            <div class="bottom">
+                <Page :total="count" :current="page" show-total show-elevator @on-change='fenye'/>
+            </div>
+        </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import {square} from '../../../assets/js/download'
+import qs from	'qs'
+export default {
+    name: 'Index',
+    data () {
+        return {
+            widthMain:{width:''},//table组件自适应
+            tagData:null,//tag数据
+            colorName:'',//对比的tag名字
+            tagDataLength:true,//可取消的状态
+
+            query: '', // 查询功能 绑定的数据
+            showNone: false, // 控制页面遮罩层开关
+            showblacklist: false, // 黑名单
+            showdriveout: false, // 踢出视频墙
+            showlocking: false, // 锁头像
+            showwarning: false, // 警告页面
+
+            useridx: null,
+            time: '', // 时间
+            rem: '', // 备注
+            page: 1, // 当前页码
+            pagesize: 10, // 每页条数
+            type: 0, // 查询条件
+            count: 0, // 总数
+            msg: '【巡警警告】请注意着装及表演行为，文明直播！',
+
+            cityList: [ // 查询条件
+                {
+                    value: 0,
+                    label: '全部'
+                },
+                {
+                    value: 1,
+                    label: '星级主播'
+                },
+                {
+                    value: 2,
+                    label: '非星级主播'
+                }
+            ],
+            times1: [ // 时间查询条件
+                {
+                    value: '90',
+                    label: '1.5小时'
+                },
+                {
+                    value: '120',
+                    label: '2小时'
+                },
+                {
+                    value: '150',
+                    label: '2.5小时'
+                },
+                {
+                    value: '180',
+                    label: '3小时'
+                }
+            ],
+            times: [ // 时间查询条件
+                {
+                    value: '1',
+                    label: '1小时'
+                },
+                {
+                    value: '2',
+                    label: '2小时'
+                },
+                {
+                    value: '12',
+                    label: '12小时'
+                },
+                {
+                    value: '24',
+                    label: '1天'
+                },
+                {
+                    value: '48',
+                    label: '2天'
+                },
+                {
+                    value: '720',
+                    label: '1月'
+                },
+                {
+                    value: '1440',
+                    label: '2月'
+                },
+                {
+                    value: '8760',
+                    label: '1年'
+                },
+                {
+                    value: '876000',
+                    label: '永久'
+                },
+            ],
+            
+            remarks: [ // 拉黑页面 备注
+                {
+                    value: '0',
+                    label: '其他'
+                },
+                {
+                    value: '1',
+                    label: '广告'
+                },
+                {
+                    value: '2',
+                    label: '违规'
+                },
+                {
+                    value: '3',
+                    label: '露点'
+                }
+            ],
+            videos: [] // 视频墙数据
+        }
+    },
+    created() {
+        window.addEventListener('resize', this.getWidth);
+        this.getWidth()
+        this.totlist()
+        
+    },
+    destroyed () {
+        window.removeEventListener('resize', this.getWidth)
+    },
+    mounted () {
+        
+    },
+    computed: {
+        
+    },
+    methods: {
+        //table组件处理函数
+        getWidth:function(){
+                var wid =document.body.clientWidth;        //网页可见区域宽(body)
+                this.widthMain.width=wid-200+'px';
+        },
+        getTag:function(){
+                this.tagData=JSON.parse(localStorage.getItem("g_tagMArry"));
+                this.colorName=this.$route.meta.name;
+        },
+        tagClose:function(item){
+            if(this.tagData.length>1){
+                let arr3 = this.tagData;
+                let arr4 = arr3.filter(item3=>{
+                    return item3.name != item.name;     
+                })
+                this.tagData=arr4;
+                localStorage.setItem('g_tagMArry',JSON.stringify(arr4))
+                if(item.name==this.$route.meta.name){
+                        this.$router.push({path: arr4[0].index[2].path});
+                        this.colorName=arr4[0].name;
+                }else{
+                }
+            }else{
+                localStorage.removeItem('g_tagMArry');
+                this.$router.push({path:'/'});
+            }   
+        },
+        tagChange:function(item){
+            this.colorName=item.name;
+            this.$router.push({path: item.index[2].path});
+        },
+        clearAll:function(){
+            let arry =[];
+            arry.push(this.$route.meta);
+            this.tagData=arry;
+            localStorage.setItem('g_tagMArry',JSON.stringify(arry))
+        },
+
+        totlist:function(){ // 初始页面刷新
+            let token =localStorage.getItem('h_g_access_token');
+            let postData = qs.stringify({
+                    page: this.page,
+                    pagesize: this.pagesize,
+                    type: this.type
+            })
+            this.$axios({
+                url: '/api/BPMService/User/GetUserOnLineListAsync',
+                method: 'get',
+                //params 参数必写 , 如果没有参数传{}也可以
+                headers:{
+                        Authorization:'Bearer '+token,
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        // 'Content-Type': 'multipart/form-data'
+                },
+                params: postData
+                
+            })
+            .then((res)=>{
+                console.log(res)
+                if(res.data.code == 1){
+                    this.$Message.success('成功!');
+                    this.videos = res.data.data.pager.roomOnLineUsers;
+                    this.count = res.data.data.pager.count;
+                }else if(res.data.code == 0){
+                    this.$Message.warning('无数据');
+                }else if(res.data.code == -1){
+                    this.$Message.error('异常');
+                }
+                    
+            })
+            .catch((err)=>{
+                console.log(err)
+                if(err.response.status==401){
+                    this.$Message.error('登录过期，请重新登录');
+                    this.$router.push({path: '/login'});
+                }
+            })
+        },
+        
+        close: function () { // 新建页面和修改页面取消修改
+            this.showNone = false, // 遮罩层关闭
+            this.showblacklist = false,
+            this.showdriveout = false,
+            this.showlocking = false,
+            this.time = '',
+            this.rem = ''
+            this.useridx = null
+        },
+        remove: function(index,row) { // 删除
+            this.data.splice(index, 1);
+            console.log(row.id)
+        },
+
+        lookup: function () { // 查找
+            let token =localStorage.getItem('h_g_access_token');
+            let postData = qs.stringify({
+                    page: this.page,
+                    pagesize: this.pagesize,
+                    type: this.type
+            })
+            this.$axios({
+                url: '/api/BPMService/User/GetUserOnLineListAsync',
+                method: 'get',
+                //params 参数必写 , 如果没有参数传{}也可以
+                headers:{
+                        Authorization:'Bearer '+token,
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        // 'Content-Type': 'multipart/form-data'
+                },
+                params: postData
+            })
+            .then((res)=>{
+                console.log(res)
+                if(res.data.code == 1){
+                    this.$Message.success('成功!');
+                    this.videos = res.data.data.pager.roomOnLineUsers;
+                    this.count = res.data.data.pager.count;
+                }else if(res.data.code == 0){
+                    this.$Message.warning('无数据');
+                }else if(res.data.code == -1){
+                    this.$Message.error('异常');
+                }
+            })
+            .catch((err)=>{
+                console.log(err)
+                if(err.response.status==401){
+                    this.$Message.error('登录过期，请重新登录');
+                    this.$router.push({path: '/login'});
+                }
+            })
+        },
+        blacklist: function(useridx) { // 拉黑
+            this.showNone = true,
+            this.showblacklist = true,
+            this.useridx = useridx
+        },
+        blacklistadd: function(){ // 拉黑
+            let token = localStorage.getItem('h_g_access_token');
+            let postData = qs.stringify({
+                    idx: Number(this.useridx),
+                    content: this.rem,
+                    time: this.time
+                }); 
+            this.showNone = false,
+            this.showblacklist = false,
+
+            this.$axios({
+                url: '/api/BPMService/User/UserOnLineManagerAsync',
+                method: 'post',
+                //params 参数必写 , 如果没有参数传{}也可以
+                headers:{
+                        Authorization:'Bearer '+token,
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        // 'Content-Type': 'multipart/form-data'
+                },
+                data: postData
+            })
+            .then((res)=>{
+                console.log(res);
+                if(this.data.code == 1){
+                    this.$Message.success('成功!');
+                    this.useridx = null,
+                    this.rem = null,
+                    this.time  = null
+                    
+                }else{
+                    this.$Message.error('异常');
+                }
+            })
+            .catch((err)=>{
+                console.log(err);
+                if(err.response.status==401){
+                    this.$Message.error('登录过期，请重新登录');
+                    this.$router.push({path: '/login'});
+                }
+            })
+        },
+        driveout: function(useridx) { // 踢出
+            this.showNone = true,
+            this.showdriveout = true,
+            this.useridx = useridx
+        },
+        driveoutadd: function() { // 踢出
+            let token = localStorage.getItem('h_g_access_token');
+            let postData = qs.stringify({
+                    idx: Number(this.useridx),
+                    content: this.rem,
+                    time: this.time
+                });
+            this.showNone = true,
+            this.showdriveout = true,
+
+            this.$axios({
+                url: '/api/BPMService/User/UserOnLineSginOutAsync',
+                method: 'post',
+                //params 参数必写 , 如果没有参数传{}也可以
+                headers:{
+                        Authorization:'Bearer '+token,
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        // 'Content-Type': 'multipart/form-data'
+                },
+                data:postData
+            })
+            .then((res)=>{
+                console.log(res);
+                if(res.data.code == 1){
+                    this.$Message.success('成功!');
+                    this.useridx = null,
+                    this.rem = null,
+                    this.time  = null
+                }else{
+                    this.$Message.error('异常');
+                }
+
+            })
+            .catch((err)=>{
+                console.log(err);
+                if(err.response.status==401){
+                    this.$Message.error('登录过期，请重新登录');
+                    this.$router.push({path: '/login'});
+                }
+            })
+        },
+        locking: function(useridx) { // 锁头像
+            this.showNone = true,
+            this.showlocking = true,
+            this.useridx = useridx
+        },
+        lockingadd: function() { // 锁头像
+            let token = localStorage.getItem('h_g_access_token');
+            let postData = qs.stringify({
+                    idx: Number(this.useridx),
+                    content: ''
+                })
+            this.showNone = false,
+            this.showlocking = false,
+            this.$axios({
+                url: '/api/BPMService/User/UserOnLineLockImgAsync',
+                method: 'post',
+                //params 参数必写 , 如果没有参数传{}也可以
+                headers:{
+                        Authorization:'Bearer '+token,
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        // 'Content-Type': 'multipart/form-data'
+                },
+                data:postData
+                
+            })
+            .then((res)=>{
+                console.log(res)
+                if(res.data.code == 1){
+                    this.$Message.success('成功!');
+                    this.useridx = null
+                }else{
+                    this.$Message.error('异常');
+                }
+            })
+            .catch((err)=>{
+                console.log(err)
+                if(err.response.status==401){
+                    this.$Message.error('登录过期，请重新登录');
+                    this.$router.push({path: '/login'});
+                }
+            })
+        },
+        warning: function(useridx) { // 发警告
+            this.showNone = true,
+            this.showwarning = true,
+            this.useridx = useridx
+        },
+
+        warningadd: function() { // 发警告
+            let token = localStorage.getItem('h_g_access_token');
+            let postData = qs.stringify({
+                idx: this.useridx,
+                msg: this.msg
+            })
+            this.showNone = false,
+            this.showwarning = false,
+
+            this.$axios({
+                url: '/api/BPMService/User/UserOnLineSendWaringAsync',
+                method: 'post',
+                //params 参数必写 , 如果没有参数传{}也可以
+                headers: {
+                        Authorization:'Bearer '+token,
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        // 'Content-Type': 'multipart/form-data'
+                },
+                data: postData
+            })
+            .then((res)=>{
+                console.log(res)
+            })
+            .catch((err)=>{
+                console.log(err)
+            })
+        },
+
+        fenye: function (page) { // 页面的分页功能
+            this.page = page;
+            this.totlist();
+        }
+    }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+.main{  // 主页面样式
+    overflow-x: scroll;
+    overflow: hidden;
+    position: relative;
+    .tips{ // 主页面
+        text-align: left;
+    }
+    .top{margin-top:10px; margin-left: 20px; display: flex; padding: 5px;  // 表头部分 查找添加 样式
+          button{
+              margin-left: 15px;
+          }
+          label{
+              margin-left: 10px;
+            //   margin-right: 10px;
+              font-size: 15px;
+          }
+    }
+    .center{width:100%; margin-top:20px;
+        button {
+            margin-right: 5px
+        }
+    }  // 页面中部 表格部分样式
+    .bottom{width:100%; margin-top:15px;} // 页面底部 分页部分样式
+
+    .pop1{
+        padding:3% 4%;
+        position: fixed;
+        top: 12%;
+        left: 30%; 
+        width: 40%;
+        height: 55%;
+        background: #fff;
+        z-index: 3001;
+        overflow-y: scroll; // 让弹出的页面可以有滚动条
+    }
+    .pop2{
+        padding:3% 4%;
+        position: fixed;
+        top: 18%;
+        left: 35%; 
+        width: 30%;
+        height: 28%;
+        background: #fff;
+        z-index: 3001;
+        overflow-y: scroll; // 让弹出的页面可以有滚动条
+    }
+
+    // 去除页面滚动条
+    /*webkit内核*/
+    .silderBar::-webkit-scrollbar {
+        width:0px;
+        height:0px;
+    }
+    .pop1::-webkit-scrollbar {
+        width:0px;
+        height:0px;
+    }
+    .pop2::-webkit-scrollbar {
+        width:0px;
+        height:0px;
+    }
+    /*o内核*/
+    .silderBar .-o-scrollbar{
+        -moz-appearance: none !important;   
+        background: rgba(0,255,0,0) !important; 
+    }
+    .pop1 .pop2 .-o-scrollbar{
+        -moz-appearance: none !important;   
+        background: rgba(0,255,0,0) !important; 
+    }
+    /*IE10,IE11,IE12*/
+    .silderBar,.pop1{
+        -ms-scroll-chaining: chained;
+        -ms-overflow-style: none;
+        -ms-content-zooming: zoom;
+        -ms-scroll-rails: none;
+        -ms-content-zoom-limit-min: 100%;
+        -ms-content-zoom-limit-max: 500%;
+        -ms-scroll-snap-type: proximity;
+        -ms-scroll-snap-points-x: snapList(100%, 200%, 300%, 400%, 500%);
+        -ms-overflow-style: none;
+        overflow: auto;
+    }
+    .silderBar,.pop2{
+        -ms-scroll-chaining: chained;
+        -ms-overflow-style: none;
+        -ms-content-zooming: zoom;
+        -ms-scroll-rails: none;
+        -ms-content-zoom-limit-min: 100%;
+        -ms-content-zoom-limit-max: 500%;
+        -ms-scroll-snap-type: proximity;
+        -ms-scroll-snap-points-x: snapList(100%, 200%, 300%, 400%, 500%);
+        -ms-overflow-style: none;
+        overflow: auto;
+    }
+}
+</style>

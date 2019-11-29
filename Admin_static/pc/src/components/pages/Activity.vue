@@ -1,0 +1,30 @@
+<template>
+  <div class="content">
+    <navBar></navBar>
+    <div class="body_main">
+        <silderBar></silderBar>
+        <div class="main">
+          <p style="background:red">main</p>
+        </div>
+    </div>
+    
+    
+    <!-- <svg-icon icon-class="paihangbang_2"></svg-icon> -->
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'HelloWorld',
+  data () {
+    return {
+      msg: 'Welcome to Your Vue.js App'
+    }
+  }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+
+</style>

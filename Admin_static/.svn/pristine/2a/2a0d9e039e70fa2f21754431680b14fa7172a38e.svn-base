@@ -1,0 +1,153 @@
+<template>
+  <div class="content">
+      <div class="login_area">
+          <!-- <img class="login_logo" src="../../assets/img/loginlogo.png" alt=""> -->
+          <p class="title">Bunny CMS Landing</p>
+          <i-form label-position="right">
+              <Form-item prop="user">
+                  <i-input type="text" size="large" placeholder="请输入你的用户名" v-model="username">
+                      <svg-icon icon-class="zhanghao" slot="prepend" style="width:16px;height:16px;"></svg-icon>
+                  </i-input>
+              </Form-item>
+              <Form-item prop="password">
+                  <i-input :type="pwdType" size="large" placeholder="请输入你的密码" v-model="password">
+                      <svg-icon icon-class="mima" slot="prepend" style="width:16px;height:16px;"></svg-icon>
+                      <svg-icon icon-class="eye" slot="append" style="width:16px;height:16px;cursor:pointer" @click="showPwd"></svg-icon>
+                  </i-input>
+              </Form-item>
+              <Form-item prop="text" style="position:relative;">
+                  <i-input type="text" size="large" placeholder="请输入验证码" v-model="code">
+                        <svg-icon icon-class="yanzhengma" slot="prepend" style="width:16px;height:16px;"></svg-icon>
+                  </i-input>
+                  <img style="height:36px;width:40%;position:absolute;right:0;top:1px;z-index:100;cursor:pointer" :src="codeImgUrl" alt="" @click="getCode">
+              </Form-item>
+              <Form-item>
+                  <i-button type="primary" long @click="goLogin()">登录</i-button>
+              </Form-item>
+          </i-form>
+      </div>
+  </div>
+</template>
+
+<script>
+  import md5 from 'js-md5';
+  export default {
+    name: 'login',
+    data() {
+      return {
+        username:'',//账号
+        password:'',//密码
+        code:'',//验证码
+        codeImgUrl:'',//验证码 base64  
+        codeId:'',//codeId
+        pwdType:'password',//tape类型
+
+        num:1,//验证码初始url拼接数据
+        loading: false,
+        dialogVisible:false
+      }
+    },
+    created () {
+      this.getInitCode()
+    },
+    methods: {
+      //初始化拿到验证码 http://192.168.84.170:5000/LinkService/Auto/MixVerifyCode
+      getInitCode:function(){
+           this.$axios({  
+            url: '/api/LinkService/Auto/MixVerifyCode',
+            method: 'get',
+          //params参数必写 , 如果没有参数传{}也可以
+            data:{ 
+            }
+          })
+          .then((res)=>{
+            this.codeImgUrl="data:image/png;base64,"+res.data.msg;
+            this.codeId=res.data.code;
+          })
+          .catch((err)=>{
+            console.log(err)
+          })
+      },
+      getCode:function(){
+        this.getInitCode()
+      },
+      showPwd() {
+        if (this.pwdType === 'password') {
+          this.pwdType = 'text'
+        } else {
+          this.pwdType = 'password'
+        }
+      },
+      goLogin() {
+        this.$axios({  
+          url: '/api/LinkService/Auto/Login',
+          method: 'post',
+        //params参数必写 , 如果没有参数传{}也可以
+          data:{  
+            username:this.username,
+            password:this.password,//md5(this.password)
+            code:this.code,
+            uuid:this.codeId,
+          }
+        })
+        .then((res)=>{
+          // console.log(res)
+          if(res.status==200){ 
+            localStorage.setItem("h_g_access_token",res.data.access_token);
+            localStorage.setItem("h_g_userName", this.username);
+            // localStorage.setItem("g_router", JSON.stringify(res.data.data));
+            this.$router.push({path: '/'});
+          }else{
+            this.$message('请重新输入');
+          }
+        })
+        .catch((err)=>{
+          this.$Message.error('请重新输入');
+          console.log(err)
+          
+        })
+      },
+      // dialogConfirm(){
+      //   this.dialogVisible =false;
+      //   setSupport(true);
+      //   window.location.href=SupportUrl;
+      // },
+      // dialogCancel(){
+      //   this.dialogVisible = false;
+      //   setSupport(false);
+      // }
+    }
+  }
+</script>
+
+<style scoped lang="scss">
+.content{
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-image: url('../../assets/img/login-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  .login_area{
+    background:#fff;
+    position: absolute;
+    left:68%; top:50%;  
+    transform:translateX(-50%) translateY(-50%);
+    -webkit-transform:translateX(-50%) translateY(-50%);
+    border:1px solid #cecece;
+    border-radius: 10px;
+    padding:30px 40px 0 40px;
+    .login_logo{
+      margin:auto;
+    }
+    .title{
+      font-size: 24px;
+      color: #888;
+      text-align: center;
+      height: 40px;
+    }
+  }
+}  
+ 
+</style>

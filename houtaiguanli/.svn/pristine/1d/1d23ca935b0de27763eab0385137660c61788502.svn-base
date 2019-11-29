@@ -1,0 +1,731 @@
+<template> 
+    <div class="main">
+        <div class="block" style="padding:30px 0px 30px 50px">
+            <span class="demonstration">日期范围：</span>
+            <el-date-picker
+                v-model="value1"
+                value-format="yyyy-MM-dd"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期">
+            </el-date-picker>
+            <!-- <span class="demonstration">产品</span>
+            <el-select v-model="product" placeholder="请选择">
+                <el-option
+                v-for="(item,index) in allProductList"
+                :key="index"
+                :label="item.name"
+                :value="item.id">
+                </el-option>
+            </el-select> -->
+             <span class="demonstration">业务员</span>
+            <el-select v-model="adress" placeholder="请选择" >
+                <el-option
+                v-for="(item,index) in allAdressList"
+                :key="index"
+                :label="item.activity_name"
+                :value="item.id">
+                </el-option>
+            </el-select>
+            <el-button type="primary" icon="el-icon-search" @click="goSearchId">查询</el-button>
+            
+        </div>
+        <div class="block2" style="padding:30px 0px 30px 50px">
+            <el-button type="primary" icon="" @click="exportExcel">导出Excel</el-button>
+            <el-button type="primary" icon="" @click="goAdd">业务员添加数据</el-button>
+            <!-- 共有数据  {{allCount}}  条 -->
+        </div>
+
+        <div ref="exportExcel" id="out-table" class="app-container">
+             <el-table 
+              border
+              show-summary
+              :summary-method="getSummaries"
+              :data="privilegeList"
+              style="width: 100%">
+              <!-- 单选框 -->
+              <el-table-column
+                type="selection">
+              </el-table-column>
+              <!-- 日期 -->
+              <el-table-column
+                label="日期"
+                width="100"
+                sortable
+                prop="create_time">
+              </el-table-column>
+              <!-- 产品名称 -->
+              <el-table-column
+                label="产品名称"
+                width="100"
+                sortable
+                prop="productId">
+              </el-table-column>
+              <!-- 现金 -->
+              <el-table-column
+                label="现金"
+                width="100"
+                sortable
+                prop="cash">
+              </el-table-column>
+              <!-- 微信 -->
+              <el-table-column
+                label="微信"
+                width="100"
+                sortable
+                prop="wx_money">
+              </el-table-column>
+              <!-- 支付宝 -->
+              <el-table-column
+                label="支付宝"
+                width="100"
+                sortable
+                prop="zfb_money">
+              </el-table-column>
+              <!-- 刷卡 -->
+              <el-table-column
+                label="刷卡"
+                width="100"
+                sortable
+                prop="cred_card">
+              </el-table-column>
+              <!-- 销售数量 -->
+              <el-table-column
+                label="销售数量"
+                width="100"
+                sortable
+                prop="saleNum">
+              </el-table-column>
+              <!-- 销售额（元） -->
+              <el-table-column
+                label="销售额（元）"
+                width="120"
+                sortable
+                prop="sale_money">
+              </el-table-column>
+              <!-- 库存数量 -->
+              <el-table-column
+                label="库存数量"
+                width="100"
+                sortable
+                prop="cur_num">
+              </el-table-column>
+              <!-- 支出项 -->
+              <el-table-column
+                label="支出项"
+                width="100"
+                sortable
+                prop="begin_num">
+              </el-table-column>
+              <!-- 支出总计 -->
+              <el-table-column
+                label="支出总计"
+                width="100"
+                sortable
+                prop="cost_money">
+              </el-table-column>
+              <!-- 活动 -->
+              <el-table-column
+                label="活动"
+                width="100"
+                sortable
+                prop="activeId">
+              </el-table-column>
+              <!-- 备注 -->
+              <el-table-column
+                label="备注"
+                width="100"
+                sortable
+                prop="remark">
+              </el-table-column>
+              <!-- 业务员 -->
+              <el-table-column
+                label="业务员"
+                width="100"
+                sortable
+                prop="salerId">
+              </el-table-column>
+              <!-- 操作 -->
+              <el-table-column
+                label="操作"
+                width="100">
+                <template slot-scope="scope">
+                  <el-button type="text" size="small" @click="goEdit(scope.row)">编辑</el-button>
+                  <el-button type="text" size="small" @click="goDelete(scope.row)">删除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          
+        </div>
+    <!-- z遮罩层 -->
+        <div class="marsk" v-if="showNone"></div>
+    <!-- 弹出框--编辑-- -->
+        <div class="pop" v-if="showNoneUpdate">
+            <el-form   ref="ruleForm" label-width="100px" class="demo-ruleForm">
+              <!--  -->
+               <el-form-item label="活动名称" prop="id" style="text-align:left">
+                  <el-select v-model="activity_id" placeholder="请选择">
+                    <el-option
+                      v-for="(item,index) in editNewList"
+                      :key="index"
+                      :label="item.activity_name"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="费用名目" prop="id">
+                  <el-input v-model="cost_name" placeholder="请输入费用名目" ></el-input>
+                </el-form-item>
+                <el-form-item label="单价" prop="id">
+                  <el-input v-model="cost_money" placeholder="请输入单价" ></el-input>
+                </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="goKeepUpdate">编辑</el-button>
+                <el-button @click="reset">取消</el-button>
+              </el-form-item>
+            </el-form>
+
+        </div>
+    <!-- 弹出框--编辑-- -->
+    <!-- 弹出框----新增 -->
+        <div class="pop" v-if="showNoneAdd">
+            <el-form   ref="ruleForm" label-width="100px" class="demo-ruleForm">
+              <!--  -->
+                <el-form-item label="产品名称" prop="id" style="text-align:left">
+                  <el-select v-model="productId" placeholder="请选择">
+                        <el-option label="区域一" value="shanghai"></el-option>
+                        <el-option label="区域二" value="beijing"></el-option>
+                        <el-option label="区域二" value="beijing"></el-option>
+                    <!-- <el-option
+                      v-for="(item,index) in editNewList"
+                      :key="index"
+                      :label="item.activity_name"
+                      :value="item.id">
+                    </el-option> -->
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="收款方式" prop="id" style="text-align:left">
+                  <el-select v-model="productId" placeholder="请选择">
+                    <el-option
+                      v-for="(item,index) in editNewList"
+                      :key="index"
+                      :label="item.activity_name"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="费用名目" prop="id">
+                  <el-input v-model="cost_name" placeholder="请输入费用名目" ></el-input>
+                </el-form-item>
+                <el-form-item label="单价" prop="id">
+                  <el-input v-model="cost_money" placeholder="请输入单价" ></el-input>
+                </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="goKeepAdd">添加</el-button>
+                <el-button @click="reset">取消</el-button>
+              </el-form-item>
+            </el-form>
+
+        </div>
+    <!-- 弹出框----新增 -->
+    </div>
+  
+</template>
+<script>
+  import FileSaver from 'file-saver';
+  import XLSX from 'xlsx';
+  export default {
+    name: "productList",
+    data() {
+      return {
+        allProductList:null,//搜索-所有产品列表
+        product:null,//搜索选中产品deid
+
+        value1: '',//搜索日期
+        allAdressList:null,//搜索-所有地址列表
+        adress:null,//搜索选中地址id
+        editList:null,//编辑新增查询数组 产品列表
+        editNewList:null,//活动列表
+        privilegeList:null,//权限列表信息
+        row:null,//被点击行的数据
+        showNone:false,//遮罩层的隐藏
+        showNoneUpdate:false,//弹出层编辑的隐藏
+        showNoneAdd:false,//弹出层新增的隐藏
+
+        allCount:0,//权限列表信息zong条数
+        input: '',//搜索双向绑定
+        showNoneGai:false,//弹出层改密的隐藏
+        
+        currentPage4:1,//当前条数
+        
+        editListqq:[],//----选中的数组name
+        
+        editNewListStr:'',//最终处理string
+        newPassword1:null,//修改密码值
+        newPassword2:null,//确认修改密码值
+        select_value:null,//下拉框选中的值
+        RoleId:null,//选中xia拉框的值  角色名称
+      // -----
+      textarea:null,//多选框的内容
+      aaa:[],
+
+      // id:null,//编号
+      // cost_name:null,//费用名目
+      // cost_money:null,//金额
+      // activity_id:null,//活动id
+      // activityName:null,//活动活动名称
+      // create_time:null,//创建时间
+      // data_state:null,//状态
+
+      id:null,
+      productId:null,
+      cash:null, //现金
+      wx_money:null, //微信支付
+      zfb_money:null, //支付宝支付
+      cred_card:null, //刷卡支付
+      saleNum:null, //销售数量
+      sale_money:null, //销售额
+      cur_num:null, //库存数量
+      begin_num:null, //支出项
+      cost_money:null, //支出总计
+      activeId:null, //活动
+      remark:null, //备注
+      salerId:null, //业务员
+      create_time:null,
+      data_state:null,
+      
+      }
+    },
+    created() {
+      this.getRoleList();
+      this.getOptionAdressMsg();
+      this.getOptionProductMsg();
+    },
+    watch: {
+      
+    },
+    filters: {
+      
+    },
+    methods: {
+      //导出Excel函数
+      exportExcel:function() {
+        //  let wb =XLSX.utils.table_to_book(this.$refs.exportExcel);
+         let wb = XLSX.utils.table_to_book(document.querySelector('#out-table'));
+         let wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'array' });
+         try {
+             FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'exportExcel.xlsx')
+         } catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
+         return wbout
+      },
+      //表格处理
+       getSummaries(param) {
+        const { columns, data } = param;
+        const sums = [];
+        columns.forEach((column, index) => {
+          if (index === 0) {
+            sums[index] = '总价';
+            return;
+          }
+         
+          const values = data.map(item => Number(item[column.property]));
+          if (!values.every(value => isNaN(value))) {
+            sums[index] = values.reduce((prev, curr) => {
+              const value = Number(curr);
+              if (!isNaN(value)) {
+                return prev + curr;
+              } else {
+                return prev;
+              }
+            }, 0);
+            sums[index] += ' 元';
+          } else {
+            sums[index] = '---';
+          }
+        });
+        return sums;
+      },
+      // gor:function(){
+      //     console.log(this.product)
+      // },
+      //获取所有产品
+      getOptionProductMsg:function(){
+         let token =localStorage.getItem('g_token'); 
+         this.$axios({  
+          url: '/api/SaleManager/SaleSellerRList',//所有产品列表
+          method: 'get',
+          //params参数必写 , 如果没有参数传{}也可以
+          headers:{
+                Authorization:'Bearer '+token
+          },
+          data:{  
+          }
+        })
+        .then((res)=>{
+          // console.log(res.data.data)
+          if(res.data.code==1){
+            this.allProductList=res.data.data; //搜索总产品列表信息
+          }else if(res.data.code==-4){
+              this.$message('登录信息过期，请重新登录');
+                localStorage.removeItem('g_userName');
+                localStorage.removeItem('g_token');
+                this.$router.push({path: '/login'});
+          }else if(res.data.code==-1){
+             this.$message(res.data.msg);
+          }else{
+            this.$message(res.msg);
+          }
+        })
+        .catch((err)=>{
+           console.log(err)
+        })
+      },
+      //获取所有活动地
+      getOptionAdressMsg:function(){
+         let token =localStorage.getItem('g_token'); 
+         this.$axios({  
+          url: '/api/ProductManager/ActivityAllList',
+          method: 'get',
+          //params参数必写 , 如果没有参数传{}也可以
+          headers:{
+                Authorization:'Bearer '+token
+          },
+          data:{  
+          }
+        })
+        .then((res)=>{
+          // console.log(res)
+          if(res.data.code==1){
+            this.allAdressList=res.data.data; //zong搜索发货地列表信息
+          }else if(res.data.code==-4){
+              this.$message('登录信息过期，请重新登录');
+                localStorage.removeItem('g_userName');
+                localStorage.removeItem('g_token');
+                this.$router.push({path: '/login'});
+          }else if(res.data.code==-1){
+            //  this.$message(res.data.msg);
+          }else{
+            this.$message(res.msg);
+          }
+        })
+        .catch((err)=>{
+           console.log(err)
+        })
+      },
+      //获取权限列表信息--ok
+      getRoleList:function(){
+        let token =localStorage.getItem('g_token');
+        this.$axios({  
+          url: '/api/SaleManager/SaleSellerRList',// 页面总列表
+         
+          method: 'get',
+          //params参数必写 , 如果没有参数传{}也可以
+          headers:{
+                Authorization:'Bearer '+token
+          },
+          data:{  
+          }
+        })
+        .then((res)=>{
+          console.log(res)
+          if(res.data.code==1){
+            this.privilegeList=res.data.data; //zong列表信息
+          }else if(res.data.code==-4){
+              this.$message('登录信息过期，请重新登录');
+                localStorage.removeItem('g_userName');
+                localStorage.removeItem('g_token');
+                this.$router.push({path: '/login'});
+          }else if(res.data.code==-1){
+             this.$message(res.data.msg);
+          }else{
+            this.$message(res.msg);
+          }
+        })
+        .catch((err)=>{
+           console.log(err)
+        })
+      },
+      //搜索id---ok
+      goSearchId:function(){
+        let token =localStorage.getItem('g_token');
+        if(this.value1==false){
+            this.$message("日期不能为空");
+        }else{
+            this.$axios({
+                url: '/api/ProductManager/OtherCostList?startTime='+this.value1[0]+'&endTime='+this.value1[1]+'&activityId='+Number(this.adress),
+                method: 'get',
+                //params参数必写 , 如果没有参数传{}也可以
+                headers:{
+                    Authorization:'Bearer '+token
+                },
+                data:{  
+                  // productId:Number(this.product),//产品
+                  // activityId:Number(this.adress),//活动
+                }
+                })
+                .then((res)=>{
+                // console.log(res.data)
+                // console.log(res.data.count[0].allcount)
+                if(res.data.code==1){
+                    this.$message(res.data.msg);
+                    this.privilegeList=res.data.data //查询成功重新赋值列表信息
+                    // this.allCount=res.data.count[0].allcount //查询成功重新赋值zong条数
+                }else if(res.data.code==-1){
+                    this.$message(res.data.msg);
+                    this.privilegeList=res.data.data //查询成功重新赋值列表信息
+                    // this.allCount=res.data.count[0].allcount //查询成功重新赋值zong条数
+                }else if(res.data.code==-4){
+                    this.$message('登录信息过期，请重新登录');
+                    localStorage.removeItem('g_userName');
+                    localStorage.removeItem('g_token');
+                    this.$router.push({path: '/login'});
+                }else{
+                    this.$message(res.data.success[0].msg);
+                }
+                })
+                .catch((err)=>{
+                    console.log(err)
+                })
+        }
+      },
+      //删除一条--ok
+      goDelete:function(row){
+        let token =localStorage.getItem('g_token');
+        this.$axios({  
+          url: '/api/ProductManager/ChangeOtherCostState',
+          method: 'post',
+        //params参数必写 , 如果没有参数传{}也可以
+          headers:{
+                    Authorization:'Bearer '+token
+          }, 
+          data:{ 
+            type:3,
+            id:row.id
+          }
+        })
+        .then((res)=>{
+          // console.log(res.data)
+          if(res.data.code==1){
+            // this.privilegeList=res.data.data //查询成功重新赋值列表信息
+            // this.allCount=res.data.count[0].allcount //查询成功重新赋值zong条数
+            this.$message(res.data.msg);
+            location.reload()
+          }else if(res.data.code==-4){
+              this.$message('登录信息过期，请重新登录');
+                localStorage.removeItem('g_userName');
+                localStorage.removeItem('g_token');
+                this.$router.push({path: '/login'});
+          }else{
+            this.$message(res.data.msg);
+          }
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
+      },
+      //新增
+      goAdd:function(){
+          let token =localStorage.getItem('g_token');
+          this.showNone=true;
+          this.showNoneAdd=true;
+
+          this.id=null;//编号
+          this.cost_name=null;//费用名目
+          this.cost_money=null;//价格
+          this.activity_id=null;//活动id
+          this.activityName=null;//活动活动名称
+          this.create_time=null;//创建时间
+          this.data_state=null;//状态 
+
+            this.$axios({  
+              url: '/api/ProductManager/ActivityAllList',
+              method: 'get',
+              //params参数必写 , 如果没有参数传{}也可以 
+              headers:{
+                    Authorization:'Bearer '+token
+              },
+              data:{   
+              }
+            })
+            .then((res)=>{
+              if(res.data.code==1){
+                this.editNewList=res.data.data;//查询成功 赋值活动列表信息
+              }else if(res.data.code==-4){
+              this.$message('登录信息过期，请重新登录');
+                localStorage.removeItem('g_userName');
+                localStorage.removeItem('g_token');
+                this.$router.push({path: '/login'});
+              }else{
+                this.$message(res.data.success[0].msg);
+              }
+            })
+            .catch((err)=>{
+                   console.log(err)
+            })
+      },
+      //编辑
+      goEdit:function(row){
+        let token =localStorage.getItem('g_token');
+        this.showNone=true;
+        this.showNoneUpdate=true;
+        this.row=row;
+        // console.log(this.row)
+
+        this.id=row.id;//编号
+        this.cost_name=row.cost_name;//费用名目
+        this.cost_money=row.cost_money;//价格
+        this.activity_id=row.activity_id;//活动id
+        this.activityName=row.activityName;//活动活动名称
+        this.create_time=row.create_time;//创建时间
+        this.data_state=row.data_state;//状态
+
+             this.$axios({  
+              url: '/api/ProductManager/ActivityAllList',
+              method: 'get',
+              //params参数必写 , 如果没有参数传{}也可以 
+              headers:{
+                    Authorization:'Bearer '+token
+              },
+              data:{   
+              }
+            })
+            .then((res)=>{
+              if(res.data.code==1){
+                this.editNewList=res.data.data;//查询成功 赋值新增产品列表信息
+              }else if(res.data.code==-4){
+              this.$message('登录信息过期，请重新登录');
+                localStorage.removeItem('g_userName');
+                localStorage.removeItem('g_token');
+                this.$router.push({path: '/login'});
+              }else{
+                this.$message(res.data.success[0].msg);
+              }
+            })
+            .catch((err)=>{
+                   console.log(err)
+            })
+      },
+      //保存--新增
+      goKeepAdd:function(){
+          let token =localStorage.getItem('g_token');
+          this.$axios({  
+              url: '/api/ProductManager/ChangeOtherCost',
+              method: 'post',
+              //params参数必写 , 如果没有参数传{}也可以 
+              headers:{
+                    Authorization:'Bearer '+token
+              },
+              data:{ 
+                activity_id:this.activity_id,//活动活动名称id
+                cost_name:this.cost_name,//费用名目
+                cost_money:Number(this.cost_money),//金额
+              }
+            })
+            .then((res)=>{
+              // console.log(res)
+              if(res.data.code==1){
+                // this.privilegeList=res.data.data //查询成功重新赋值列表信息
+                // this.allCount=res.data.count[0].allcount //查询成功重新赋值zong条数
+                this.$message(res.data.msg);
+                location.reload();
+              }else if(res.data.code==-4){
+              this.$message('登录信息过期，请重新登录');
+                localStorage.removeItem('g_userName');
+                localStorage.removeItem('g_token');
+                this.$router.push({path: '/login'});
+              }else{
+                this.$message(res.data.success[0].msg);
+              }
+            })
+            .catch((err)=>{
+                   console.log(err)
+            })
+      },
+      //保存--编辑
+      goKeepUpdate:function(){
+          // console.log(this.editList)
+          let token =localStorage.getItem('g_token');
+          this.$axios({  
+              url: '/api/ProductManager/ChangeOtherCost',
+              method: 'post',
+              //params参数必写 , 如果没有参数传{}也可以 
+              headers:{
+                    Authorization:'Bearer '+token
+              },
+              data:{   
+                id:this.id,             // 员工编号
+                activity_id:this.activity_id,//活动活动名称id
+                cost_name:this.cost_name,//费用名目
+                cost_money:Number(this.cost_money),//金额
+              }
+            })
+            .then((res)=>{
+              if(res.data.code==1){
+                // this.privilegeList=res.data.data //查询成功重新赋值列表信息
+                // this.allCount=res.data.count[0].allcount //查询成功重新赋值zong条数
+                this.$message(res.data.msg);
+                location.reload();
+              }else if(res.data.code==-4){
+              this.$message('登录信息过期，请重新登录');
+                localStorage.removeItem('g_userName');
+                localStorage.removeItem('g_token');
+                this.$router.push({path: '/login'});
+              }else{
+                this.$message(res.data.success[0].msg);
+              }
+            })
+            .catch((err)=>{
+                   console.log(err)
+            })
+      },
+      //关闭编辑弹框
+      reset:function(){
+        this.showNone=false;
+        this.showNoneUpdate=false;
+        this.showNoneAdd=false;
+        this.showNoneGai=false;
+      },
+    }
+  }
+</script>
+<style>
+
+
+/* .block2{
+  text-align:right;
+} */
+.block_fenye{
+  padding-left: 30px;
+  padding-right: 30px;
+}
+.block_fenye .el-pagination__sizes{
+  margin-right:450px;
+}
+.main{
+    /* flex: 1; */
+    position: relative;
+}
+.marsk{
+  position: absolute;
+  top: 0;
+  left: 0; 
+  width: 100%;
+  height: 200%;
+  background: #000;
+  opacity: 0.5;
+  z-index: 2999;
+}
+.pop{
+  padding:2% 4%;
+  position: absolute;
+  top: 9%;
+  left: 18%; 
+  width: 60%;
+  height: 80%;
+  background: #fff;
+  z-index: 3001;
+}
+</style>
+
+

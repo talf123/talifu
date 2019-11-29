@@ -1,0 +1,143 @@
+<template>
+  <div class="silderBar">
+        <div class="logoArea">
+            喵播后台管理
+        </div>
+        <Menu :theme="theme" :accordion="true" width="200px">
+        <Submenu name="1">
+            <template slot="title">
+                <Icon type="ios-analytics" />
+                房间管理
+            </template>
+            <Menu-item to="/paymentmenu" name="1-1">支付菜单</Menu-item>
+            <Menu-item to="/hostlength" name="1-2">主播时长查询</Menu-item>
+            <Menu-item to="/supervisor" name="1-3">室主管理</Menu-item>
+            <Menu-item to="/hotListadvertising" name="1-4">热门列表广告管理</Menu-item>
+            <Menu-item to="/advertising" name="1-5">广告管理</Menu-item>
+            <Menu-item to="/hothostlist" name="1-6">热门主播列表</Menu-item>
+            <Menu-item to="/hostlevelrecommendation" name="1-7">主播一级推荐</Menu-item>
+            <Menu-item to="/gifthotpush" name="1-8">礼物热推管理</Menu-item>
+            <Menu-item to="/hostlevel2recommendation" name="1-9">主播二级推荐</Menu-item>
+            <Menu-item to="/roomhangup" name="1-10">房间挂机查询</Menu-item>
+            <Menu-item to="/titleofwheat" name="1-11">封号封麦</Menu-item>
+            <Menu-item to="/userlivevideo" name="1-12">用户直播视频流</Menu-item>
+            <Menu-item to="/roomdeletion" name="1-13">房间管理删除</Menu-item>
+            <Menu-item to="/userroomserver" name="1-14">用户房间服务器</Menu-item>
+        </Submenu>
+        <Submenu name="2">
+            <template slot="title">
+                <Icon type="ios-people"></Icon>
+                用户管理
+            </template>
+            <Menu-item to="/membershiplist" name="2-1">会员列表</Menu-item>
+            <Menu-item to="/anchorbankcard" name="2-2">主播银行卡资料</Menu-item>
+            <Menu-item to="/crownlist" name="2-3">皇冠列表</Menu-item>
+            <Menu-item to="/staranchorsettings" name="2-4">星级主播设置</Menu-item>
+            <Menu-item to="/overpipenumber" name="2-5">超管号管理</Menu-item>
+            <Menu-item to="/unscramblewheat" name="2-6">解号解麦</Menu-item>
+            <Menu-item to="/hostnew" name="2-7">主播新进管理</Menu-item>
+            <Menu-item to="/videowall" name="2-8">视频墙管理</Menu-item>
+            <Menu-item to="/newanchordeleted" name="2-9">新进主播删除</Menu-item>
+            <Menu-item to="/dischargeofprohibitions" name="2-10">禁言解除管理</Menu-item>
+            <Menu-item to="/openingauditofnonstar" name="2-11">非星级主播开播审核</Menu-item>
+            <Menu-item to="/cephalometry" name="2-12">头像审核</Menu-item>
+            <Menu-item to="/hotblacklist" name="2-13">热门黑名单</Menu-item>
+            <Menu-item to="/equipmentnumberquery" name="2-14">设备号查询</Menu-item>
+            <Menu-item to="/userbindingmobile" name="2-15">用户绑定手机查询</Menu-item>
+            <Menu-item to="/newuserrecommendedanchor" name="2-16">新用户推荐主播</Menu-item>
+            <Menu-item to="/useraccountunlocking" name="2-17">用户账号解锁</Menu-item>
+            <Menu-item to="/starratedanchorblacklist" name="2-18">星级主播黑名单</Menu-item>
+            <Menu-item to="/retailhost" name="2-19">散户主播管理</Menu-item>
+            <Menu-item to="/authenticatedanchor" name="2-20">认证主播家族管理</Menu-item>
+        </Submenu>
+        <Submenu name="3">
+            <template slot="title">
+                <Icon type="ios-people"></Icon>
+                销售业务
+            </template>
+            <Menu-item name="3-1">新增和启动</Menu-item>
+            <Menu-item name="3-2">活跃分析</Menu-item>
+            <Menu-item name="3-3">时段分析</Menu-item>
+            <Menu-item name="3-4">用户留存</Menu-item>
+            <Menu-item name="3-5">流失用户</Menu-item>
+        </Submenu>
+        <Submenu name="4">
+            <template slot="title">
+                <Icon type="ios-people"></Icon>
+                货币管理
+            </template>
+            <Menu-item name="4-1">新增和启动</Menu-item>
+            <Menu-item name="4-2">活跃分析</Menu-item>
+        </Submenu>
+        <Submenu name="5">
+            <template slot="title">
+                <Icon type="ios-people"></Icon>
+                礼物管理
+            </template>
+            <Menu-item name="5-1">新增和启动</Menu-item>
+            <Menu-item name="5-2">活跃分析</Menu-item>
+        </Submenu>
+        <Submenu name="6">
+            <template slot="title">
+                <Icon type="ios-people"></Icon>
+                房间统计
+            </template>
+            <Menu-item name="6-1">新增和启动</Menu-item>
+            <Menu-item name="6-2">活跃分析</Menu-item>
+        </Submenu>
+        <Submenu name="7">
+            <template slot="title">
+                <Icon type="ios-people"></Icon>
+                代理商管理
+            </template>
+            <Menu-item name="7-1">新增和启动</Menu-item>
+            <Menu-item name="7-2">活跃分析</Menu-item>
+        </Submenu>
+        <Submenu name="8">
+            <template slot="title">
+                <Icon type="ios-people"></Icon>
+                系统设置
+            </template>
+            <Menu-item name="8-1">新增和启动</Menu-item>
+            <Menu-item name="8-2">活跃分析</Menu-item>
+        </Submenu>
+    </Menu>  
+  </div>
+</template>
+
+<script>
+
+
+  export default {
+    name: 'Slider',
+    data() {
+      return {
+        theme: 'dark',//silder 背景颜色 light  dark
+      }
+    },
+    created () {
+      
+    },
+    methods: {
+
+    }
+     
+  }
+</script>
+
+<style scoped lang="scss">
+.silderBar{
+    .logoArea{
+        width: 160px;
+        margin:20px auto;
+        background: #2D8CF0;
+        border-radius:10px 5px 5px 0;
+        color:#fff;
+        font-weight: 900;
+        line-height: 34px;
+        font-size: 22px;
+        color:#fff;
+        
+    }
+}
+</style>

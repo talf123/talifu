@@ -1,0 +1,174 @@
+<template>
+  <div class="content">
+      <div class="content_bg">
+      </div>
+      <div class="login_area">
+          <!-- <img class="login_logo" src="../../assets/img/loginlogo.png" alt=""> -->
+          <p class="title">Bunny CMS Landing</p>
+          <i-form label-position="right">
+              <Form-item prop="user">
+                  <i-input type="text" size="large" placeholder="请输入你的用户名">
+                      <svg-icon icon-class="zhanghao" slot="prepend" style="width:16px;height:16px;"></svg-icon>
+                  </i-input>
+              </Form-item>
+              <Form-item prop="password">
+                  <i-input type="password" size="large" placeholder="请输入你的密码">
+                      <svg-icon icon-class="mima" slot="prepend" style="width:16px;height:16px;"></svg-icon>
+                  </i-input>
+              </Form-item>
+              <Form-item prop="text" style="width:150px;position:relative;">
+                  <i-input type="password" size="large" placeholder="请输入验证码">
+                        <svg-icon icon-class="yanzhengma" slot="prepend" style="width:16px;height:16px;"></svg-icon>
+                  </i-input>
+                  <!-- <img style="height:36px;width:100px;position:absolute;right:-102px;top:0px;" src="../../assets/img/loginlogo.png" alt=""> -->
+              </Form-item>
+              <Form-item>
+                  <i-button type="primary" long @click="handleSubmit()">登录</i-button>
+              </Form-item>
+          </i-form>
+      </div>
+  </div>
+</template>
+
+<script>
+  // import md5 from 'js-md5';
+
+
+  export default {
+    name: 'login',
+    data() {
+      return {
+        
+      }
+    },
+    created () {
+      // this.getInitCode()
+      
+    },
+    methods: {
+      handleSubmit() {
+       
+      },
+      //初始化拿到验证码
+      // getInitCode:function(){
+      //      this.$axios({  
+      //       url: '/api/Auto',
+      //       method: 'get',
+      //     //params参数必写 , 如果没有参数传{}也可以
+      //       data:{ 
+      //       }
+      //     })
+      //     .then((res)=>{
+      //       this.codeImgUrl="data:image/png;base64,"+res.data.msg;
+      //       this.codeId=res.data.code;
+      //     })
+      //     .catch((err)=>{
+      //       console.log(err)
+      //     })
+      // },
+      // getCode:function(){
+      //   this.$axios({  
+      //       url: '/api/Auto',
+      //       method: 'get',
+      //     //params参数必写 , 如果没有参数传{}也可以
+      //       data:{ 
+      //       }
+      //     })
+      //     .then((res)=>{
+      //       this.codeImgUrl="data:image/png;base64,"+res.data.msg;
+      //       this.codeId=res.data.code;
+      //     })
+      //     .catch((err)=>{
+      //       console.log(err)
+      //     })
+
+      // },
+      // showPwd() {
+      //   if (this.pwdType === 'password') {
+      //     this.pwdType = ''
+      //   } else {
+      //     this.pwdType = 'password'
+      //   }
+      // },
+      // goLogin() {
+      //   this.$axios({  
+      //     url: '/api/Auto',
+      //     method: 'post',
+      //   //params参数必写 , 如果没有参数传{}也可以
+      //     data:{  
+      //       account:this.username,
+      //       passwd:md5(this.password),
+      //       code:this.code,
+      //       codeId:this.codeId,
+      //     }
+      //   })
+      //   .then((res)=>{
+      //     // console.log(res.data)
+      //     // console.log(res.data.code)
+      //     // console.log(res.data.token)
+      //     if(res.data.code==1){ 
+      //       localStorage.setItem("g_id",res.data.count[0].id);
+      //       localStorage.setItem("g_token",res.data.token);
+      //       localStorage.setItem("g_userName", this.username);
+      //       localStorage.setItem("g_router", JSON.stringify(res.data.data));
+      //       this.$router.push({path: '/'});
+      //     }else if(res.data.code==-1){
+      //       // localStorage.setItem("g_token",res.data.token);
+      //       // localStorage.setItem("g_userName", 'admin');
+      //       // this.$router.push({path: '/'});
+      //       this.$message(res.data.msg);
+      //     }else if(res.data.code==-2){
+      //       this.$message(res.data.msg);
+      //     }
+      //   })
+      //   .catch((err)=>{
+      //     console.log(err)
+      //   })
+      // },
+      // dialogConfirm(){
+      //   this.dialogVisible =false;
+      //   setSupport(true);
+      //   window.location.href=SupportUrl;
+      // },
+      // dialogCancel(){
+      //   this.dialogVisible = false;
+      //   setSupport(false);
+      // }
+    }
+  }
+</script>
+
+<style scoped lang="scss">
+.content{
+  position: relative;
+  .content_bg{
+    width:100%;
+    height: 50%;
+    background: #8CA5CD;
+  }
+  .login_area{
+    position: absolute;
+    left:0;
+    top:0;
+    right:0;
+    bottom:0;
+    margin:auto;
+    height: 504px;
+    width:344px;
+    border:5px solid #cecece;
+    padding:30px 40px 0 40px;
+    // text-align: left;
+    .login_logo{
+      margin:auto;
+    }
+    .title{
+      font-size: 24px;
+      color: #888;
+      // padding-top: 180px;
+      text-align: center;
+      height: 40px;
+    }
+  }
+}  
+ 
+</style>

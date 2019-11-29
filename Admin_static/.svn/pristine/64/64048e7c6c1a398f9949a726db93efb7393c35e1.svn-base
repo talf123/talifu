@@ -1,0 +1,235 @@
+<template>
+<div class="content">
+    <silderBar></silderBar>
+    <div class="body_main">
+        <navBar></navBar>
+        <div class="main" :style="widthMain">
+            <div class="tips" id="{this.$route.name}">
+                <Breadcrumb separator="<b class='demo-breadcrumb-separator'>=></b>">
+                    <BreadcrumbItem :to="item.path" v-for="(item,index) in this.$route.meta.index" :key="index">{{item.name}}</BreadcrumbItem>
+                </Breadcrumb>
+            </div>
+          <!-- 查询 新增 -->
+            <div class="top">
+                <label>用户idx：</label>
+                <Input v-model="RoomID" size="small" placeholder="IDX" style="width: 200px" />
+                <Select v-model="query" size="small" style="width: 150px; margin-left: 5px;">
+                    <Option v-for="item in FamilyLevel" size="small" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                </Select>
+                <Button type="primary" size="small" @click="lookup">查询</Button>
+            </div>
+          <!-- 主页面内容 -->
+            <div class="center" >
+                <Table border :columns="biao" :data="tabledata" class="table"  ref="table">
+                    <template slot-scope="{ row }" slot="name">
+                        <strong>{{ row.name }}</strong>
+                    </template>
+                    <template slot-scope="{ row, index }" slot="action">
+                        <Button type="text" size="small" @click="unseal(row)">解封</Button>
+                    </template>
+                </Table>
+            </div>
+          <!-- 遮罩层 -->
+            <div class="marsk" v-if="showNone"></div>
+          <!-- 解封页面 -->
+            <div class="pop" v-if="showNoneUpdate">
+                <p style="font-size:30px; margin-bottom: 30px;">是否解封?</p>
+                <Button type="primary" @click="unseal_confirm()">确定</Button>
+                <Button type="error" style="margin-left: 60px;" @click="close()">取消</Button>
+
+            </div>
+          <!-- 分页页面 -->
+            <div class="bottom">
+                <Page :total="100" show-total show-elevator @on-change='fenye'/>
+            </div>
+        </div>
+    </div>
+</div>
+</template>
+
+<script>
+import {square} from '../../../assets/js/download'
+export default {
+  name: 'Index',
+  data () {
+    return {
+        widthMain:{width:''},//table组件自适应
+        //面包屑数组
+        RoomID: null,
+        query: null, // 查询功能 绑定的数据
+
+        showNone: false, // 控制页面遮罩层开关
+        showNoneUpdate: false, // 解封页面弹出控制
+
+        pay: null,
+        id: null,
+        FamilyLevel: [
+            {
+                label: '解封号码',
+                value: '1'
+            },
+            {
+                label: '解封设备',
+                value: '2'
+            },
+            {
+                label: '解麦',
+                value: '3'
+            }
+        ],
+
+        columns1: [ // 表格列名称
+            {title: '用户ID',key: 'roomid'}, 
+            {title: '到期时间',key: 'familyname'},
+            {title: '添加时间',key: 'Signing'},
+            {title: '操作人',key: 'Signing'},
+            {title: '备注',key: 'Signing'},
+            {title: '操作',slot: 'action',align: 'center'}
+        ],
+        columns2: [ // 表格列名称
+            {title: '用户ID',key: 'roomid'}, 
+            {title: '添加时间',key: 'familyname'},
+            {title: '设备ID',key: 'Signing'},
+            {title: '设备类型',key: 'Signing'},
+            {title: '操作',slot: 'action',align: 'center'}
+        ],
+        columns3: [ // 表格列名称
+            {title: '编号',key: 'roomid'}, 
+            {title: '用户idx',key: 'familyname'},
+            {title: '昵称',key: 'familyname'},
+            {title: '性别	',key: 'Signing'},
+            {title: '最后时间',key: 'Signing'},
+            {title: '操作人',key: 'Signing'},
+            {title: '备注',key: 'Signing'},
+            {title: '操作',slot: 'action',align: 'center'}
+        ],
+        biao: [], // 用于在lookup()中动态接收表头 columns的信息。
+        tabledata: [ // 数据表数据
+            {
+                roomid: 'Android', // 支付类型
+                familyname: 'com.sunday.80', // 商品ID
+                money: 1, // 金额
+                Signing: 7000, //  币值
+                zfb_name: 0, // 礼物赠送币
+                Sub_operation: 'New York No. 1 Lake Park' // 说明
+            }
+        ],
+        resets: { // 暂存页面内容数据 用于重置输入框时候使用
+                roomid: '', // 房间ID
+        }
+    }
+  },
+  created() {
+    window.addEventListener('resize', this.getWidth);
+    this.getWidth()
+  },
+  destroyed () {
+    window.removeEventListener('resize', this.getWidth)
+  },
+  mounted () {
+      
+  },
+  computed: {
+  },
+  methods: {
+      //table组件处理函数
+      getWidth:function(){
+              var wid =document.body.clientWidth;        //网页可见区域宽(body)
+                this.widthMain.width=wid-200+'px';
+      },
+      unseal: function(row) { // 解封页面
+          this.showNone = true,
+          this.showNoneUpdate = true,
+          this.id = row.roomid,
+          this.pay = row.familyname
+      },
+      unseal_confirm: function() { // 修改页面保存
+          this.showNone = false,
+          this.showNoneUpdate = false,
+          console.log(this.id)
+          console.log(this.pay)
+      },
+      close: function () { // 新建页面和修改页面取消修改
+          this.showNone = false, // 遮罩层关闭
+          this.showNoneUpdate = false, // 修改页面关闭
+
+          this.resets.pay = null, // 页面重置功能 使用的缓存数据清空
+          this.resets.id = null
+      },
+      remove: function(index,row) { // 删除
+          this.data.splice(index, 1);
+          console.log(row.id)
+      },
+      lookup: function () { // 查找
+        //   console.log(this.query)
+          if (this.query == '1')
+          {
+              this.biao = this.columns1
+          }
+          else if (this.query == '2')
+          {
+              this.biao = this.columns2
+          }
+          else if (this.query == '3')
+          {
+              this.biao = this.columns3
+          }
+          else 
+          {
+              console.log(this.query)
+          }
+      },
+      fenye: function (page) { // 页面的分页功能
+          console.log(page)
+      }
+  }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+.main{  // 主页面样式
+    overflow-x: scroll;
+    overflow: hidden;
+    position: relative;
+    .tips{ // 主页面
+        text-align: left;
+    }
+    .top{margin-top:10px; margin-left: 20px; display: flex; padding: 5px;  // 表头部分 查找添加 样式
+          button{
+              margin-left: 15px;
+          }
+          label{
+              margin-left: 15px;
+            //   margin-right: 15px;
+              font-size: 15px;
+          }
+    }
+    .center{width:100%; margin-top:20px;
+        button {
+            margin-right: 5px
+        }
+    }  // 页面中部 表格部分样式
+    .bottom{width:100%; margin-top:15px;} // 页面底部 分页部分样式
+    .marsk{ // 遮罩层
+        position: fixed;
+        top: 0;
+        left: 0; 
+        width: 100%;
+        height: 100%;
+        background: #000;
+        opacity: 0.5;
+        z-index: 2999;
+    }
+    .pop{  // 弹出层
+        padding:2% 4%;
+        position: fixed;
+        top: 25%;
+        left: 32%; 
+        width: 35%;
+        height: 30%;
+        background: #fff;
+        z-index: 3001;
+    }
+}
+</style>

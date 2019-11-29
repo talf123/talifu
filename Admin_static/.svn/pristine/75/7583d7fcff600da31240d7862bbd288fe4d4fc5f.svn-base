@@ -1,0 +1,107 @@
+<template>
+  <div class="silderBar">
+             <Menu :theme="theme" :accordion="accordion" width="200px">
+                <Submenu key="1">
+                    <template slot="title">
+                        <Icon type="ios-paper"></Icon>
+                        房间管理
+                    </template>
+                    <Menu-item key="1-1">测试用菜单</Menu-item>
+                    <Menu-item key="1-2">支付菜单</Menu-item>
+                    <Menu-item key="1-3">主播时长查询</Menu-item>
+                    <Menu-item key="1-4">室主管理</Menu-item>
+                    <Menu-item key="1-5">运营小组管理</Menu-item>
+                    <Menu-item key="1-6">热门广告小组管理</Menu-item>
+                    <Menu-item key="1-7">文章管理</Menu-item>
+                    <Menu-item key="1-8">评论管理</Menu-item>
+                    <Menu-item key="1-9">举报管理</Menu-item>
+                </Submenu>
+                <Submenu key="2">
+                    <template slot="title">
+                        <Icon type="ios-people"></Icon>
+                        用户管理
+                    </template>
+                    <Menu-item key="2-1">新增用户</Menu-item>
+                    <Menu-item key="2-2">活跃用户</Menu-item>
+                </Submenu>
+                <Submenu key="3">
+                    <template slot="title">
+                        <Icon type="ios-people"></Icon>
+                        销售业务
+                    </template>
+                    <Menu-item key="3-1">新增和启动</Menu-item>
+                    <Menu-item key="3-2">活跃分析</Menu-item>
+                    <Menu-item key="3-3">时段分析</Menu-item>
+                    <Menu-item key="3-4">用户留存</Menu-item>
+                    <Menu-item key="3-5">流失用户</Menu-item>
+                </Submenu>
+                <Submenu key="4">
+                    <template slot="title">
+                        <Icon type="ios-people"></Icon>
+                        货币管理
+                    </template>
+                    <Menu-item key="4-1">新增和启动</Menu-item>
+                    <Menu-item key="4-2">活跃分析</Menu-item>
+                </Submenu>
+                <Submenu key="5">
+                    <template slot="title">
+                        <Icon type="ios-people"></Icon>
+                        礼物管理
+                    </template>
+                    <Menu-item key="5-1">新增和启动</Menu-item>
+                    <Menu-item key="5-2">活跃分析</Menu-item>
+                </Submenu>
+                <Submenu key="6">
+                    <template slot="title">
+                        <Icon type="ios-people"></Icon>
+                        房间统计
+                    </template>
+                    <Menu-item key="6-1">新增和启动</Menu-item>
+                    <Menu-item key="6-2">活跃分析</Menu-item>
+                </Submenu>
+                <Submenu key="7">
+                    <template slot="title">
+                        <Icon type="ios-people"></Icon>
+                        代理商管理
+                    </template>
+                    <Menu-item key="7-1">新增和启动</Menu-item>
+                    <Menu-item key="7-2">活跃分析</Menu-item>
+                </Submenu>
+                <Submenu key="8">
+                    <template slot="title">
+                        <Icon type="ios-people"></Icon>
+                        系统设置
+                    </template>
+                    <Menu-item key="8-1">新增和启动</Menu-item>
+                    <Menu-item key="8-2">活跃分析</Menu-item>
+                </Submenu>
+            </Menu>
+  </div>
+</template>
+
+<script>
+
+
+  export default {
+    name: 'Slider',
+    data() {
+      return {
+        theme: 'dark',//silder 背景颜色 light  dark
+        accordion:'true'
+      }
+    },
+    created () {
+      
+    },
+    methods: {
+
+    }
+     
+  }
+</script>
+
+<style scoped lang="scss">
+.silderBar{
+
+}
+</style>

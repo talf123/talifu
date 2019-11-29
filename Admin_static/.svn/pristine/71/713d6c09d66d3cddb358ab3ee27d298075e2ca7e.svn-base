@@ -1,0 +1,866 @@
+import Vue from 'vue'
+import Router from 'vue-router'
+import HelloWorld from '@/components/pages/HelloWorld'
+import Error from '@/components/pages/Error'
+import Login from '@/components/pages/Login'
+import Index from '@/components/pages/Index'
+import Activity from '@/components/pages/Activity'
+import College from '@/components/pages/College'
+import System from '@/components/pages/System.vue'
+import Power from '@/components/pages/Power.vue'
+import Add from '@/components/pages/Add.vue'
+import Up from '@/components/pages/Up.vue'//页面
+//房间管理 --->>14
+import PaymentMenu from '@/components/pages/room/PaymentMenu.vue'//支付菜单 1
+import HostLength from '@/components/pages/room/HostLength.vue'//主播时长查询 2
+import Supervisor from '@/components/pages/room/Supervisor.vue'//室主管理 3
+import HotListAdvertising from '@/components/pages/room/HotListAdvertising.vue'//热门列表广告管理 4
+import Advertising from '@/components/pages/room/Advertising.vue'//广告管理 5
+import HotHostList from '@/components/pages/room/HotHostList.vue'//热门主播列表 6
+import HostlevelRecommendation from '@/components/pages/room/HostlevelRecommendation.vue'//主播一级推荐 7
+import GiftHotPush from '@/components/pages/room/GiftHotPush.vue'//礼物热推管理 8
+import HostLevel2Recommendation from '@/components/pages/room/HostLevel2Recommendation.vue'//主播二级推荐 9
+import RoomHangUp from '@/components/pages/room/RoomHangUp.vue'//房间挂机查询 10
+import TitleOfWheat from '@/components/pages/room/TitleOfWheat.vue'//封号封麦 11
+import UserLiveVideo from '@/components/pages/room/UserLiveVideo.vue'//用户直播视频流 12
+import RoomDeletion from '@/components/pages/room/RoomDeletion.vue'//房间管理删除 13
+import UserRoomServer from '@/components/pages/room/UserRoomServer.vue'//用户房间服务器 14
+//用户管理 --->>20
+import MembershipList from '@/components/pages/users/MembershipList.vue'//会员列表 1
+import AnchorBankCard from '@/components/pages/users/AnchorBankCard.vue'//主播银行卡资料 2
+import CrownList from '@/components/pages/users/CrownList.vue'//皇冠列表 3
+import StarAnchorSettings from '@/components/pages/users/StarAnchorSettings.vue'//星级主播设置 4
+import OverpipeNumber from '@/components/pages/users/OverpipeNumber.vue'//超管号管理 5
+import UnscrambleWheat from '@/components/pages/users/UnscrambleWheat.vue'//解号解麦 6
+import HostNew from '@/components/pages/users/HostNew.vue'//主播新进管理 7
+import VideoWall from '@/components/pages/users/VideoWall.vue'//视频墙管理 8
+import NewAnchorDeleted from '@/components/pages/users/NewAnchorDeleted.vue'//新进主播删除 9
+import DischargeOfProhibitions from '@/components/pages/users/DischargeOfProhibitions.vue'//禁言解除管理 10
+import OpeningAuditOfNonStar from '@/components/pages/users/OpeningAuditOfNonStar.vue'//非星级主播开播审核 11
+import Cephalometry from '@/components/pages/users/Cephalometry.vue'//头像审核 12
+import HotBlacklist from '@/components/pages/users/HotBlacklist.vue'//热门黑名单 13
+import EquipmentNumberQuery from '@/components/pages/users/EquipmentNumberQuery.vue'//设备号查询 14
+import UserBindingMobile from '@/components/pages/users/UserBindingMobile.vue'//用户绑定手机查询 15
+import NewUserRecommendedAnchor from '@/components/pages/users/NewUserRecommendedAnchor.vue'//新用户推荐主播 16
+import UserAccountUnlocking from '@/components/pages/users/UserAccountUnlocking.vue'//用户账号解锁 17
+import StarratedAnchorBlacklist from '@/components/pages/users/StarratedAnchorBlacklist.vue'//星级主播黑名单 18
+import RetailHost from '@/components/pages/users/RetailHost.vue'//散户主播管理 19
+import AuthenticatedAnchor from '@/components/pages/users/AuthenticatedAnchor.vue'//认证主播家族管理 20
+//销售业务 --->>10
+import Rechargeable from '@/components/pages/sales/Rechargeable.vue'//充值流水 1
+import RefillDetails from '@/components/pages/sales/RefillDetails.vue'//充值明细 2
+import DailyRecharge from '@/components/pages/sales/DailyRecharge.vue'//每日充值人数 3
+import Recharge from '@/components/pages/sales/Recharge.vue'//充值新增统计 4
+import NumberSales from '@/components/pages/sales/NumberSales.vue'//号码销售管理 5
+import SystemDegraded  from '@/components/pages/sales/SystemDegraded.vue'//系统降级查询 6
+import NumberofGifts from '@/components/pages/sales/NumberofGifts.vue'//赠送礼物数量查询 7
+import AppleRecharge from '@/components/pages/sales/AppleRecharge.vue'//苹果充值渠道统计 8
+import OrderSystem from '@/components/pages/sales/OrderSystem.vue'//订单系统 9
+import InvoiceInquiry from '@/components/pages/sales/InvoiceInquiry.vue'//调单查询 10
+//货币管理 --->>6
+import CanadianDollar from '@/components/pages/monetary/CanadianDollar.vue'//后台加币
+import UserCurrency from '@/components/pages/monetary/UserCurrency.vue'//用户币信息
+import CurrencyDetailed from '@/components/pages/monetary/CurrencyDetailed.vue'//币明细统计
+import GiftMoney from '@/components/pages/monetary/GiftMoney.vue'//赠送币统计
+import CleanupMoney from '@/components/pages/monetary/CleanupMoney.vue'//清除货币
+import CurrencyFreeze from '@/components/pages/monetary/CurrencyFreeze.vue'//货币冻结
+//礼物管理 --->>5
+import LuckyGift from '@/components/pages/gifts/LuckyGift.vue'//幸运礼物统计
+import GiftManagement from '@/components/pages/gifts/GiftManagement.vue'//礼物管理
+import GiftProbability from '@/components/pages/gifts/GiftProbability.vue'//礼物概率管理
+import DetailedStatistics from '@/components/pages/gifts/DetailedStatistics.vue'//幸运礼物明细统计
+import BigGiftStatistics from '@/components/pages/gifts/BigGiftStatistics.vue'//大礼物统计
+//房间统计 --->>11
+import NewRegistration from '@/components/pages/roomStatistics/NewRegistration.vue'//注册新增统计
+import TimeRegistration from '@/components/pages/roomStatistics/TimeRegistration.vue'//分时注册统计
+import OnlineNumber from '@/components/pages/roomStatistics/OnlineNumber.vue'//在线人数统计
+import RoomPopularity from '@/components/pages/roomStatistics/RoomPopularity.vue'//房间人气
+import RoomConsumption from '@/components/pages/roomStatistics/RoomConsumption.vue'//房间流水消耗
+import IndividualAnchors from '@/components/pages/roomStatistics/IndividualAnchors.vue'//单个主播明细
+import DailyAnchor from '@/components/pages/roomStatistics/DailyAnchor.vue'//每日主播明细
+import ContrastChart from '@/components/pages/roomStatistics/ContrastChart.vue'//开播人数对比图
+import DailyTask  from '@/components/pages/roomStatistics/DailyTask.vue'//每日任务统计
+import HostPipeline from '@/components/pages/roomStatistics/HostPipeline.vue'//主播流水消耗
+import AnchorDoll from '@/components/pages/roomStatistics/AnchorDoll.vue'//主播娃娃兑换
+//代理商管理 --->>
+import AgencyRecharge from '@/components/pages/agent/AgencyRecharge.vue'//代理账号充值
+import AgentFinance from '@/components/pages/agent/AgentFinance.vue'//代理商管理（财务）
+import PointCard from '@/components/pages/agent/PointCard.vue'//点卡查询
+import DailyTurnover from '@/components/pages/agent/DailyTurnover.vue'//每日交易额查询
+import MonthlyTurnover from '@/components/pages/agent/MonthlyTurnover.vue'//每月交易额统计
+//系统设置 --->>
+// import MonthlyTurnover from '@/components/pages/agent/MonthlyTurnover.vue'//关键字管理
+// import MonthlyTurnover from '@/components/pages/agent/MonthlyTurnover.vue'//系统配置
+// import MonthlyTurnover from '@/components/pages/agent/MonthlyTurnover.vue'//管理员管理
+// import MonthlyTurnover from '@/components/pages/agent/MonthlyTurnover.vue'//权限分配
+// import MonthlyTurnover from '@/components/pages/agent/MonthlyTurnover.vue'//室主公告管理
+
+
+// import MonthlyTurnover from '@/components/pages/agent/MonthlyTurnover.vue'//系统消息发送
+
+
+// import MonthlyTurnover from '@/components/pages/agent/MonthlyTurnover.vue'//IT服务端人数
+// import MonthlyTurnover from '@/components/pages/agent/MonthlyTurnover.vue'//IT配置管理（房间）
+// import MonthlyTurnover from '@/components/pages/agent/MonthlyTurnover.vue'//IT配置管理（代理）
+
+// import MonthlyTurnover from '@/components/pages/agent/MonthlyTurnover.vue'//IT配置管理（登录）
+// import MonthlyTurnover from '@/components/pages/agent/MonthlyTurnover.vue'//房间服务器更换
+// import MonthlyTurnover from '@/components/pages/agent/MonthlyTurnover.vue'//版本控制
+// import MonthlyTurnover from '@/components/pages/agent/MonthlyTurnover.vue'//版本使用统计
+// import MonthlyTurnover from '@/components/pages/agent/MonthlyTurnover.vue'//CDN切换
+
+
+
+Vue.use(Router)
+const router= new Router({
+  // mode:'history',
+  routes: [
+    {
+      path:'*',
+      component:Error
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
+    },
+    {
+      path: '/',
+      name: 'HelloWorld',
+      component: HelloWorld
+    },
+    //系统设置
+
+
+
+
+
+
+    //代理商管理
+    {
+      path: '/agencyrecharge',
+      name: 'AgencyRecharge',
+      component: AgencyRecharge,
+      meta:{
+        name:'首页/代理商管理/代理账号充值',
+        index:[{name:'首页',path:'/'},{name:'代理商管理',path:''},{name:'代理账号充值',path:'/agencyrecharge'},]
+      }
+    },
+    {
+      path: '/agentfinance',
+      name: 'AgentFinance',
+      component: AgentFinance,
+      meta:{
+        name:'首页/代理商管理/代理商管理（财务）',
+        index:[{name:'首页',path:'/'},{name:'代理商管理',path:''},{name:'代理商管理（财务）',path:'/agentfinance'},]
+      }
+    },
+    {
+      path: '/pointcard',
+      name: 'PointCard',
+      component: PointCard,
+      meta:{
+        name:'首页/代理商管理/点卡查询',
+        index:[{name:'首页',path:'/'},{name:'代理商管理',path:''},{name:'点卡查询',path:'/pointcard'},]
+      }
+    },
+    {
+      path: '/dailyturnover',
+      name: 'DailyTurnover',
+      component: DailyTurnover,
+      meta:{
+        name:'首页/代理商管理/每日交易额查询',
+        index:[{name:'首页',path:'/'},{name:'代理商管理',path:''},{name:'每日交易额查询',path:'/dailyturnover'},]
+      }
+    },
+    {
+      path: '/monthlyturnover',
+      name: 'MonthlyTurnover',
+      component: MonthlyTurnover,
+      meta:{
+        name:'首页/代理商管理/每月交易额统计',
+        index:[{name:'首页',path:'/'},{name:'代理商管理',path:''},{name:'每月交易额统计',path:'/monthlyturnover'},]
+      }
+    },
+    //房间统计
+    {
+      path: '/newregistration',
+      name: 'NewRegistration',
+      component: NewRegistration,
+      meta:{
+        name:'首页/房间统计/注册新增统计',
+        index:[{name:'首页',path:'/'},{name:'房间统计',path:''},{name:'注册新增统计',path:'/newregistration'},]
+      }
+    },
+    {
+      path: '/timeregistration',
+      name: 'TimeRegistration',
+      component: TimeRegistration,
+      meta:{
+        name:'首页/房间统计/分时注册统计',
+        index:[{name:'首页',path:'/'},{name:'房间统计',path:''},{name:'分时注册统计',path:'/timeregistration'},]
+      }
+    },
+    {
+      path: '/onlinenumber',
+      name: 'OnlineNumber',
+      component: OnlineNumber,
+      meta:{
+        name:'首页/房间统计/在线人数统计',
+        index:[{name:'首页',path:'/'},{name:'房间统计',path:''},{name:'在线人数统计',path:'/onlinenumber'},]
+      }
+    },
+    {
+      path: '/roompopularity',
+      name: 'RoomPopularity',
+      component: RoomPopularity,
+      meta:{
+        name:'首页/房间统计/房间人气',
+        index:[{name:'首页',path:'/'},{name:'房间统计',path:''},{name:'房间人气',path:'/roompopularity'},]
+      }
+    },
+    {
+      path: '/roomconsumption',
+      name: 'RoomConsumption',
+      component: RoomConsumption,
+      meta:{
+        name:'首页/房间统计/房间流水消耗',
+        index:[{name:'首页',path:'/'},{name:'房间统计',path:''},{name:'房间流水消耗',path:'/roomconsumption'},]
+      }
+    },
+    {
+      path: '/individualanchors',
+      name: 'IndividualAnchors',
+      component: IndividualAnchors,
+      meta:{
+        name:'首页/房间统计/单个主播明细',
+        index:[{name:'首页',path:'/'},{name:'房间统计',path:''},{name:'单个主播明细',path:'/individualanchors'},]
+      }
+    },
+    {
+      path: '/dailyanchor',
+      name: 'DailyAnchor',
+      component: DailyAnchor,
+      meta:{
+        name:'首页/房间统计/每日主播明细',
+        index:[{name:'首页',path:'/'},{name:'房间统计',path:''},{name:'每日主播明细',path:'/dailyanchor'},]
+      }
+    },
+    {
+      path: '/contrastchart',
+      name: 'ContrastChart',
+      component: ContrastChart,
+      meta:{
+        name:'首页/房间统计/开播人数对比图',
+        index:[{name:'首页',path:'/'},{name:'房间统计',path:''},{name:'开播人数对比图',path:'/contrastchart'},]
+      }
+    },
+    {
+      path: '/dailytask',
+      name: 'DailyTask',
+      component: DailyTask,
+      meta:{
+        name:'首页/房间统计/每日任务统计',
+        index:[{name:'首页',path:'/'},{name:'房间统计',path:''},{name:'每日任务统计',path:'/dailytask'},]
+      }
+    },
+    {
+      path: '/hostPipeline',
+      name: 'HostPipeline',
+      component: HostPipeline,
+      meta:{
+        name:'首页/房间统计/主播流水消耗',
+        index:[{name:'首页',path:'/'},{name:'房间统计',path:''},{name:'主播流水消耗',path:'/hostPipeline'},]
+      }
+    },
+    {
+      path: '/anchordoll',
+      name: 'AnchorDoll',
+      component: AnchorDoll,
+      meta:{
+        name:'首页/房间统计/主播娃娃兑换',
+        index:[{name:'首页',path:'/'},{name:'房间统计',path:''},{name:'主播娃娃兑换',path:'/anchordoll'},]
+      }
+    },
+    //礼物管理
+    {
+      path: '/luckygift',
+      name: 'LuckyGift',
+      component: LuckyGift,
+      meta:{
+        name:'首页/礼物管理/幸运礼物统计',
+        index:[{name:'首页',path:'/'},{name:'礼物管理',path:''},{name:'幸运礼物统计',path:'/luckygift'},]
+      }
+    },
+    {
+      path: '/giftmanagement',
+      name: 'GiftManagement',
+      component: GiftManagement,
+      meta:{
+        name:'首页/礼物管理/礼物管理',
+        index:[{name:'首页',path:'/'},{name:'礼物管理',path:''},{name:'礼物管理',path:'/giftmanagement'},]
+      }
+    },
+    {
+      path: '/giftprobability',
+      name: 'GiftProbability',
+      component: GiftProbability,
+      meta:{
+        name:'首页/礼物管理/礼物概率管理',
+        index:[{name:'首页',path:'/'},{name:'礼物管理',path:''},{name:'礼物概率管理',path:'/giftprobability'},]
+      }
+    },
+    {
+      path: '/detailedstatistics',
+      name: 'DetailedStatistics',
+      component: DetailedStatistics,
+      meta:{
+        name:'首页/礼物管理/幸运礼物明细统计',
+        index:[{name:'首页',path:'/'},{name:'礼物管理',path:''},{name:'幸运礼物明细统计',path:'/detailedstatistics'},]
+      }
+    },
+    {
+      path: '/biggiftstatistics',
+      name: 'BigGiftStatistics',
+      component: BigGiftStatistics,
+      meta:{
+        name:'首页/礼物管理/大礼物统计',
+        index:[{name:'首页',path:'/'},{name:'礼物管理',path:''},{name:'大礼物统计',path:'/biggiftstatistics'},]
+      }
+    },
+    //货币管理
+    {
+      path: '/canadiandollar',
+      name: 'CanadianDollar',
+      component: CanadianDollar,
+      meta:{
+        name:'首页/货币管理/后台加币',
+        index:[{name:'首页',path:'/'},{name:'货币管理',path:''},{name:'后台加币',path:'/canadiandollar'},]
+      }
+    },
+    {
+      path: '/usercurrency',
+      name: 'UserCurrency',
+      component: UserCurrency,
+      meta:{
+        name:'首页/货币管理/用户币信息',
+        index:[{name:'首页',path:'/'},{name:'货币管理',path:''},{name:'用户币信息',path:'/usercurrency'},]
+      }
+    },
+    {
+      path: '/currencydetailed',
+      name: 'CurrencyDetailed',
+      component: CurrencyDetailed,
+      meta:{
+        name:'首页/货币管理/币明细统计',
+        index:[{name:'首页',path:'/'},{name:'货币管理',path:''},{name:'币明细统计',path:'/currencydetailed'},]
+      }
+    },
+    {
+      path: '/giftmoney',
+      name: 'GiftMoney',
+      component: GiftMoney,
+      meta:{
+        name:'首页/货币管理/赠送币统计',
+        index:[{name:'首页',path:'/'},{name:'货币管理',path:''},{name:'赠送币统计',path:'/giftmoney'},]
+      }
+    },
+    {
+      path: '/cleanupmoney',
+      name: 'CleanupMoney',
+      component: CleanupMoney,
+      meta:{
+        name:'首页/货币管理/清除货币',
+        index:[{name:'首页',path:'/'},{name:'货币管理',path:''},{name:'清除货币',path:'/cleanupmoney'},]
+      }
+    },
+    {
+      path: '/currencyfreeze',
+      name: 'CurrencyFreeze',
+      component: CurrencyFreeze,
+      meta:{
+        name:'首页/货币管理/货币冻结',
+        index:[{name:'首页',path:'/'},{name:'货币管理',path:''},{name:'货币冻结',path:'/currencyfreeze'},]
+      }
+    },
+    //销售业务
+    {
+      path: '/rechargeable',
+      name: 'Rechargeable',
+      component: Rechargeable,
+      meta:{
+        name:'首页/销售业务/充值流水',
+        index:[{name:'首页',path:'/'},{name:'销售业务',path:''},{name:'充值流水',path:'/rechargeable'},]
+      }
+    },
+    {
+      path: '/refilldetails',
+      name: 'RefillDetails',
+      component: RefillDetails,
+      meta:{
+        name:'首页/销售业务/充值明细',
+        index:[{name:'首页',path:'/'},{name:'销售业务',path:''},{name:'充值明细',path:'/refilldetails'},]
+      }
+    },
+    {
+      path: '/dailyrecharge',
+      name: 'DailyRecharge',
+      component: DailyRecharge,
+      meta:{
+        name:'首页/销售业务/每日充值人数',
+        index:[{name:'首页',path:'/'},{name:'销售业务',path:''},{name:'每日充值人数',path:'/dailyrecharge'},]
+      }
+    },
+    {
+      path: '/recharge',
+      name: 'Recharge',
+      component: Recharge,
+      meta:{
+        name:'首页/销售业务/充值新增统计',
+        index:[{name:'首页',path:'/'},{name:'销售业务',path:''},{name:'充值新增统计',path:'/recharge'},]
+      }
+    },
+    {
+      path: '/numbersales',
+      name: 'NumberSales',
+      component: NumberSales,
+      meta:{
+        name:'首页/销售业务/号码销售管理',
+        index:[{name:'首页',path:'/'},{name:'销售业务',path:''},{name:'号码销售管理',path:'/numbersales'},]
+      }
+    },
+    {
+      path: '/systemdegraded',
+      name: 'SystemDegraded',
+      component: SystemDegraded,
+      meta:{
+        name:'首页/销售业务/系统降级查询',
+        index:[{name:'首页',path:'/'},{name:'销售业务',path:''},{name:'系统降级查询',path:'/systemdegraded'},]
+      }
+    },
+    {
+      path: '/numberofgifts',
+      name: 'NumberofGifts',
+      component: NumberofGifts,
+      meta:{
+        name:'首页/销售业务/赠送礼物数量查询',
+        index:[{name:'首页',path:'/'},{name:'销售业务',path:''},{name:'赠送礼物数量查询',path:'/numberofgifts'},]
+      }
+    },
+    {
+      path: '/applerecharge',
+      name: 'AppleRecharge',
+      component: AppleRecharge,
+      meta:{
+        name:'首页/销售业务/苹果充值渠道统计',
+        index:[{name:'首页',path:'/'},{name:'销售业务',path:''},{name:'苹果充值渠道统计',path:'/applerecharge'},]
+      }
+    },
+    {
+      path: '/ordersystem',
+      name: 'OrderSystem',
+      component: OrderSystem,
+      meta:{
+        name:'首页/销售业务/订单系统',
+        index:[{name:'首页',path:'/'},{name:'销售业务',path:''},{name:'订单系统',path:'/ordersystem'},]
+      }
+    },
+    {
+      path: '/invoiceinquiry',
+      name: 'InvoiceInquiry',
+      component: InvoiceInquiry,
+      meta:{
+        name:'首页/销售业务/调单查询',
+        index:[{name:'首页',path:'/'},{name:'销售业务',path:''},{name:'调单查询',path:'/invoiceinquiry'},]
+      }
+    },
+    // 用户管理
+    {
+      path: '/membershiplist',
+      name: 'MembershipList',
+      component: MembershipList,
+      meta:{
+        name:'首页/用户管理/会员列表',
+        index:[{name:'首页',path:'/'},{name:'用户管理',path:''},{name:'会员列表',path:'/membershiplist'},]
+      }
+    },
+    {
+      path: '/anchorbankcard',
+      name: 'AnchorBankCard',
+      component: AnchorBankCard,
+      meta:{
+        name:'首页/用户管理/主播银行卡资料',
+        index:[{name:'首页',path:'/'},{name:'用户管理',path:''},{name:'主播银行卡资料',path:'/anchorbankcard'},]
+      }
+    },
+    {
+      path: '/crownlist',
+      name: 'CrownList',
+      component: CrownList,
+      meta:{
+        name:'首页/用户管理/皇冠列表',
+        index:[{name:'首页',path:'/'},{name:'用户管理',path:''},{name:'皇冠列表',path:'/crownlist'},]
+      }
+    },
+    {
+      path: '/staranchorsettings',
+      name: 'StarAnchorSettings',
+      component: StarAnchorSettings,
+      meta:{
+        name:'首页/用户管理/星级主播设置',
+        index:[{name:'首页',path:'/'},{name:'用户管理',path:''},{name:'星级主播设置',path:'/staranchorsettings'},]
+      }
+    },
+    {
+      path: '/overpipenumber',
+      name: 'OverpipeNumber',
+      component: OverpipeNumber,
+      meta:{
+        name:'首页/用户管理/超管号管理',
+        index:[{name:'首页',path:'/'},{name:'用户管理',path:''},{name:'超管号管理',path:'/overpipenumber'},]
+      }
+    },
+    {
+      path: '/unscramblewheat',
+      name: 'UnscrambleWheat',
+      component: UnscrambleWheat,
+      meta:{
+        name:'首页/用户管理/解号解麦',
+        index:[{name:'首页',path:'/'},{name:'用户管理',path:''},{name:'解号解麦',path:'/unscramblewheat'},]
+      }
+    },
+    {
+      path: '/hostnew',
+      name: 'HostNew',
+      component: HostNew,
+      meta:{
+        name:'首页/用户管理/主播新进管理',
+        index:[{name:'首页',path:'/'},{name:'用户管理',path:''},{name:'主播新进管理',path:'/hostnew'},]
+      }
+    },
+    {
+      path: '/videowall',
+      name: 'VideoWall',
+      component: VideoWall,
+      meta:{
+        name:'首页/用户管理/视频墙管理',
+        index:[{name:'首页',path:'/'},{name:'用户管理',path:''},{name:'视频墙管理',path:'/videowall'},]
+      }
+    },
+    {
+      path: '/newanchordeleted',
+      name: 'NewAnchorDeleted',
+      component: NewAnchorDeleted,
+      meta:{
+        name:'首页/用户管理/新进主播删除',
+        index:[{name:'首页',path:'/'},{name:'用户管理',path:''},{name:'新进主播删除',path:'/newanchordeleted'},]
+      }
+    },
+    {
+      path: '/dischargeofprohibitions',
+      name: 'DischargeOfProhibitions',
+      component: DischargeOfProhibitions,
+      meta:{
+        name:'首页/用户管理/禁言解除管理',
+        index:[{name:'首页',path:'/'},{name:'用户管理',path:''},{name:'禁言解除管理',path:'/dischargeofprohibitions'},]
+      }
+    },
+    {
+      path: '/openingauditofnonstar',
+      name: 'OpeningAuditOfNonStar',
+      component: OpeningAuditOfNonStar,
+      meta:{
+        name:'首页/用户管理/非星级主播开播审核',
+        index:[{name:'首页',path:'/'},{name:'用户管理',path:''},{name:'非星级主播开播审核',path:'/openingauditofnonstar'},]
+      }
+    },
+    {
+      path: '/cephalometry',
+      name: 'Cephalometry',
+      component: Cephalometry,
+      meta:{
+        name:'首页/用户管理/头像审核',
+        index:[{name:'首页',path:'/'},{name:'用户管理',path:''},{name:'头像审核',path:'/cephalometry'},]
+      }
+    },
+    {
+      path: '/hotblacklist',
+      name: 'HotBlacklist',
+      component: HotBlacklist,
+      meta:{
+        name:'首页/用户管理/热门黑名单',
+        index:[{name:'首页',path:'/'},{name:'用户管理',path:''},{name:'热门黑名单',path:'/hotblacklist'},]
+      }
+    },
+    {
+      path: '/equipmentnumberquery',
+      name: 'EquipmentNumberQuery',
+      component: EquipmentNumberQuery,
+      meta:{
+        name:'首页/用户管理/设备号查询',
+        index:[{name:'首页',path:'/'},{name:'用户管理',path:''},{name:'设备号查询',path:'/equipmentnumberquery'},]
+      }
+    },
+    {
+      path: '/userbindingmobile',
+      name: 'UserBindingMobile',
+      component: UserBindingMobile,
+      meta:{
+        name:'首页/用户管理/用户绑定手机查询',
+        index:[{name:'首页',path:'/'},{name:'用户管理',path:''},{name:'用户绑定手机查询',path:'/userbindingmobile'},]
+      }
+    },
+    {
+      path: '/newuserrecommendedanchor',
+      name: 'NewUserRecommendedAnchor',
+      component: NewUserRecommendedAnchor,
+      meta:{
+        name:'首页/用户管理/新用户推荐主播',
+        index:[{name:'首页',path:'/'},{name:'用户管理',path:''},{name:'新用户推荐主播',path:'/newuserrecommendedanchor'},]
+      }
+    },
+    {
+      path: '/useraccountunlocking',
+      name: 'UserAccountUnlocking',
+      component: UserAccountUnlocking,
+      meta:{
+        name:'首页/用户管理/用户账号解锁',
+        index:[{name:'首页',path:'/'},{name:'用户管理',path:''},{name:'用户账号解锁',path:'/useraccountunlocking'},]
+      }
+    },
+    {
+      path: '/starratedanchorblacklist',
+      name: 'StarratedAnchorBlacklist',
+      component: StarratedAnchorBlacklist,
+      meta:{
+        name:'首页/用户管理/星级主播黑名单',
+        index:[{name:'首页',path:'/'},{name:'用户管理',path:''},{name:'星级主播黑名单',path:'/starratedanchorblacklist'},]
+      }
+    },
+    {
+      path: '/retailhost',
+      name: 'RetailHost',
+      component: RetailHost,
+      meta:{
+        name:'首页/用户管理/散户主播管理',
+        index:[{name:'首页',path:'/'},{name:'用户管理',path:''},{name:'散户主播管理',path:'/retailhost'},]
+      }
+    },
+    {
+      path: '/authenticatedanchor',
+      name: 'AuthenticatedAnchor',
+      component: AuthenticatedAnchor,
+      meta:{
+        name:'首页/用户管理/认证主播家族管理',
+        index:[{name:'首页',path:'/'},{name:'用户管理',path:''},{name:'认证主播家族管理',path:'/authenticatedanchor'},]
+      }
+    },
+    // 房间管理
+    {
+      path: '/paymentmenu',
+      name: 'PaymentMenu',
+      component: PaymentMenu,
+      meta:{
+        name:'首页/房间管理/支付菜单',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'支付菜单',path:'/paymentmenu'},]
+      }
+    },
+    {
+      path: '/hostlength',
+      name: 'HostLength',
+      component: HostLength,
+      meta:{
+        name:'首页/房间管理/主播时长查询',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'主播时长查询',path:'/hostlength'},]
+      }
+    },
+    {
+      path: '/supervisor',
+      name: 'Supervisor',
+      component: Supervisor,
+      meta:{
+        name:'首页/房间管理/室主管理',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'室主管理',path:'/supervisor'},]
+      }
+    },
+    {
+      path: '/hotListadvertising',
+      name: 'HotListAdvertising',
+      component: HotListAdvertising,
+      meta:{
+        name:'首页/房间管理/热门列表广告管理',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'热门列表广告管理',path:'/hotListadvertising'},]
+      }
+    },
+    {
+      path: '/advertising',
+      name: 'Advertising',
+      component: Advertising,
+      meta:{
+        name:'首页/房间管理/广告管理',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'广告管理',path:'/advertising'},]
+      }
+    },
+    {
+      path: '/hothostlist',
+      name: 'HotHostList',
+      component: HotHostList,
+      meta:{
+        name:'首页/房间管理/热门主播列表',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'热门主播列表',path:'/hothostlist'},]
+      }
+    },
+    {
+      path: '/hostlevelrecommendation',
+      name: 'HostlevelRecommendation',
+      component: HostlevelRecommendation,
+      meta:{
+        name:'首页/房间管理/主播一级推荐',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'主播一级推荐',path:'/hostlevelrecommendation'},]
+      }
+    },
+    {
+      path: '/gifthotpush',
+      name: 'GiftHotPush',
+      component: GiftHotPush,
+      meta:{
+        name:'首页/房间管理/礼物热推管理',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'礼物热推管理',path:'/gifthotpush'},]
+      }
+    },
+    {
+      path: '/hostlevel2recommendation',
+      name: 'HostLevel2Recommendation',
+      component: HostLevel2Recommendation,
+      meta:{
+        name:'首页/房间管理/主播二级推荐',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'主播二级推荐',path:'/hostlevel2recommendation'},]
+      }
+    },
+    {
+      path: '/roomhangup',
+      name: 'RoomHangUp',
+      component: RoomHangUp,
+      meta:{
+        name:'首页/房间管理/房间挂机查询',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'房间挂机查询',path:'/roomhangup'},]
+      }
+    },
+    {
+      path: '/titleofwheat',
+      name: 'TitleOfWheat',
+      component: TitleOfWheat,
+      meta:{
+        name:'首页/房间管理/封号封麦',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'封号封麦',path:'/titleofwheat'},]
+      }
+    },
+    {
+      path: '/userlivevideo',
+      name: 'UserLiveVideo',
+      component: UserLiveVideo,
+      meta:{
+        name:'首页/房间管理/用户直播视频流',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'用户直播视频流',path:'/userlivevideo'},]
+      }
+    },
+    {
+      path: '/roomdeletion',
+      name: 'RoomDeletion',
+      component: RoomDeletion,
+      meta:{
+        name:'首页/房间管理/房间管理删除',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'房间管理删除',path:'/roomdeletion'},]
+      }
+    },
+    {
+      path: '/userroomserver',
+      name: 'UserRoomServer',
+      component: UserRoomServer,
+      meta:{
+        name:'首页/房间管理/用户房间服务器',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'用户房间服务器',path:'/userroomserver'},]
+      }
+    },
+   
+
+
+
+
+
+
+    {
+      path: '/activity',
+      name: 'Activity',
+      component: Activity
+    },
+    {
+      path: '/index',
+      name: 'Index',
+      component: Index
+    },
+    {
+      path: '/college',
+      name: 'College',
+      component: College
+    },
+    {
+      path: '/system',
+      name: 'System',
+      component: System
+    },
+    {
+      path: '/power',
+      name: 'Power',
+      component: Power,
+      meta:{
+        name:'首页/房间管理/下载',
+        title:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'power页面',path:'/power'}]
+      }
+    },
+    {
+      path: '/add',
+      name: 'Add',
+      component: Add,
+      meta:{
+        name:'首页/房间管理/下载',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:'/'},{name:'power页面',path:'/power'},]
+      }
+    },
+    {
+      path: '/up',
+      name: 'Up',
+      component: Up,
+      meta:{
+        name:'首页/房间管理/下载',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:'/'},{name:'power页面',path:'/power'},]
+      }
+    },
+  ]
+})
+
+// 全局路由守卫
+router.beforeEach((to, from, next) => {
+  // console.log('navigation-guards');
+  // to: Route: 即将要进入的目标 路由对象
+  // from: Route: 当前导航正要离开的路由
+  // next: Function: 一定要调用该方法来 resolve 这个钩子。执行效果依赖 next 方法的调用参数。
+  const nextRoute = ['Activity'];
+  let isLogin=localStorage.getItem("g_userName1");// 是否登录
+  console.log(isLogin);
+  // 未登录状态；当路由到nextRoute指定页时，跳转至login
+  if (nextRoute.indexOf(to.name) >= 0) { 
+    if (isLogin==null) {
+      console.log('what fuck');
+      router.push({ name: 'Login' })
+    }
+  }
+  // 已登录状态；当路由到login时，跳转至home
+  if (to.name === 'Login') {
+    if (isLogin) {
+      router.push({ name: 'HelloWorld' });
+    }
+  }
+  next();
+});
+export default router

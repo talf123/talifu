@@ -1,0 +1,477 @@
+<template>
+<div class="main">
+  <div class="block" style="padding: 10px 0px 30px 70px;">
+    <span class="demonstration">日期范围：</span>
+    <el-date-picker
+      v-model="value"
+      type="daterange"
+      range-separator="至"
+      start-placeholder="开始日期"
+      end-placeholder="结束日期">
+    </el-date-picker>
+
+    <el-select v-model="value1" filterable placeholder="请选择">
+      <el-option
+        v-for="item in tableData"
+        :key="item.salesman"
+        :label="item.salesman"
+        :value="item.salesman">
+      </el-option>
+    </el-select>
+    <el-button type="primary" @click="seek()">查询</el-button>
+    <el-button type="primary" @click="excel()">导出Excel</el-button>
+  </div>
+  <!-- 业务员业务添加页面 -->
+  <div>
+    <el-button type="primary" @click="dialogFormVisible = true">业务员添加数据</el-button>
+        <el-dialog title="" :visible.sync="dialogFormVisible" center>
+        <el-form :model="form">
+          <el-form-item label="产品名称：" :label-width="formLabelWidth">
+            <el-select v-model="form.name" allow-create filterable clearable placeholder="请选择活动区域" class='www'>
+              <el-option label="咖啡" value="kafei"></el-option>
+              <el-option label="海苔" value="haitai"></el-option>
+              <el-option label="毛肚" value="maodu"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="收款方式：" :label-width="formLabelWidth">
+            <el-select v-model="form.region" allow-create filterable clearable placeholder="请选择活动区域" class='www'>
+              <el-option label="现金" value="cash"></el-option>
+              <el-option label="微信" value="wechat"></el-option>
+              <el-option label="支付宝" value="alipay"></el-option>
+              <el-option label="刷卡" value="cardpay"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="金额：" :label-width="formLabelWidth">
+            <el-input v-model="form.money " autocomplete="off" clearable class='www'></el-input>
+          </el-form-item>
+          <el-form-item label="数量：" :label-width="formLabelWidth">
+            <el-input v-model="form.number" autocomplete="off" clearable class='www'></el-input>
+          </el-form-item>
+          <el-form-item label="活动：" :label-width="formLabelWidth">
+            <el-select v-model="form.activity" allow-create filterable clearable placeholder="请选择活动区域" class='www'>
+              <el-option label="杭州会展" value="hangzhou"></el-option>
+              <el-option label="北京会展" value="beijing"></el-option>
+              <el-option label="山东会展" value="shandong"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="支出名目：" :label-width="formLabelWidth">
+            <el-select v-model="form.name2" allow-create filterable clearable placeholder="请选择活动区域" class='www'>
+              <el-option label="住宿" value="zhusu"></el-option>
+              <el-option label="吃饭" value="chifan"></el-option>
+              <el-option label="交通费" value="jiaotongfei"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="金额：" :label-width="formLabelWidth">
+            <el-input v-model="form.money2" autocomplete="off" clearable class='www'></el-input>
+          </el-form-item>
+          <el-form-item label="备注：" :label-width="formLabelWidth">
+            <el-input v-model="form.remarks" autocomplete="off" clearable class='www'></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="create(),dialogFormVisible = false">确 定</el-button>
+        </div>
+      </el-dialog>
+  </div>
+  <!-- 主显示页面 -->
+  <div>
+    <el-table
+      :data="tableData"
+      border
+      :summary-method="getSummaries"
+      show-summary
+      style="width: 100%;">
+      <el-table-column
+        prop="data"
+        label="日期"
+        width="100px">
+      </el-table-column>
+      <el-table-column
+        prop="name"
+        label="产品名称">
+      </el-table-column>
+      <el-table-column
+        prop="cash"
+        label="现金">
+      </el-table-column>
+      <el-table-column
+        prop="wechat"
+        label="微信">
+      </el-table-column>
+      <el-table-column
+        prop="alipay"
+        label="支付宝">
+      </el-table-column>
+      <el-table-column
+        prop="cardpay"
+        label="刷卡">
+      </el-table-column>
+      <el-table-column
+        prop="sales"
+        label="销售数量">
+      </el-table-column>
+      <el-table-column
+        prop="volume"
+        label="销售额(元)">
+      </el-table-column>
+      <el-table-column
+        prop="number"
+        label="库存数量">
+      </el-table-column>
+      <el-table-column
+        prop="items"
+        label="支出项">
+      </el-table-column>
+      <el-table-column
+        prop="total"
+        label="支出总计">
+      </el-table-column>
+      <el-table-column
+        prop="activity"
+        label="活动">
+      </el-table-column>
+      <el-table-column
+        prop="remarks"
+        label="备注">
+      </el-table-column>
+      <el-table-column
+        prop="salesman"
+        label="业务员">
+      </el-table-column>
+      <el-table-column
+        prop="amount3"
+        label="操作"
+        width="100">
+        <template slot-scope="scope">
+          <el-button
+            @click="handleEdit(scope.row),dialogForm = true"
+            type="text"
+            size="small">
+            修改
+          </el-button>
+          <!-- 页面修改功能页面 -->
+            <el-dialog title="收货地址" :visible.sync="dialogForm" center>
+              <el-form :model="form1">
+                <el-form-item label="产品名称：" :label-width="formLabelWidth">
+                  <el-select v-model="form1.name" allow-create filterable clearable class='www'>
+                    <el-option label="咖啡" value="kafei"></el-option>
+                    <el-option label="海苔" value="haitai"></el-option>
+                    <el-option label="毛肚" value="maodu"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="收款方式：" :label-width="formLabelWidth">
+                  <el-select v-model="form1.region" allow-create filterable clearable class='www'>
+                    <el-option label="现金" value="cash"></el-option>
+                    <el-option label="微信" value="wechat"></el-option>
+                    <el-option label="支付宝" value="alipay"></el-option>
+                    <el-option label="刷卡" value="cardpay"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="金额：" :label-width="formLabelWidth">
+                  <el-input v-model="form1.money " autocomplete="off" clearable class='www'></el-input>
+                </el-form-item>
+                <el-form-item label="数量：" :label-width="formLabelWidth">
+                  <el-input v-model="form1.number" autocomplete="off" clearable class='www'></el-input>
+                </el-form-item>
+                <el-form-item label="活动：" :label-width="formLabelWidth">
+                  <el-select v-model="form1.activity" allow-create filterable clearable placeholder="请选择活动区域" class='www'>
+                    <el-option label="杭州会展" value="hangzhou"></el-option>
+                    <el-option label="北京会展" value="beijing"></el-option>
+                    <el-option label="山东会展" value="shandong"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="支出名目：" :label-width="formLabelWidth">
+                  <el-select v-model="form1.name2" allow-create filterable clearable placeholder="请选择活动区域" class='www'>
+                    <el-option label="住宿" value="zhusu"></el-option>
+                    <el-option label="吃饭" value="chifan"></el-option>
+                    <el-option label="交通费" value="jiaotongfei"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="金额：" :label-width="formLabelWidth">
+                  <el-input v-model="form1.money2" autocomplete="off" clearable class='www'></el-input>
+                </el-form-item>
+                <el-form-item label="备注：" :label-width="formLabelWidth">
+                  <el-input v-model="form1.remarks" autocomplete="off" clearable class='www'></el-input>
+                </el-form-item>
+              </el-form>
+              <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogForm = false">取 消</el-button>
+                <el-button type="primary" @click="handleEdit(scope.row),dialogForm = false">确 定</el-button>
+              </div>
+            </el-dialog> 
+          <el-button
+            @click.native.prevent="handleDelete(scope.row)"
+            type="text"
+            size="small">
+            移除
+          </el-button>
+      </template>
+      </el-table-column>
+    </el-table>
+  </div>
+</div>
+</template>
+<script>
+
+  export default {
+    name: 'login',
+    data() {   
+      return {
+        value: '',
+        value1: '',
+        dialogFormVisible: false,
+        dialogForm: false,
+        formLabelWidth: '120px',
+        //新建业务员数据表
+        form: {
+          name: '',
+          region: '',
+          money: '',
+          number: '',
+          activity: '',
+          name2: '',
+          remarks: ''
+        },
+        //更新业务员数据表
+        form1: {
+          name: '',
+          region: '',
+          money: '',
+          number: '',
+          activity: '',
+          name2: '',
+          remarks: ''
+        },
+
+        //测试使用业务员数据包
+      tableData: [{
+          id: '12987122',
+          data: '2018-02-07',
+          name: 'aaaaa',
+          cash: '234',
+          wechat: '3.2',
+          alipay: '67',
+          cardpay: '10',
+          sales: '10',
+          volume: '33',
+          number: '33',
+          items: '33',
+          total: '33',
+          activity: '3asas3',
+          remarks: 'aaaaa',
+          salesman: 'qqq121',
+          label: 1,
+        }, {
+          id: '12987123',
+          data: '2018-02-07',
+          name: 'bbbbb',
+          cash: '165',
+          wechat: '4.43',
+          alipay: '32',
+          cardpay: '12',
+          sales: '21',
+          volume: '33',
+          number: '25',
+          items: '25',
+          total: '25',
+          activity: 'sasaa',
+          remarks: 'aaaaaaa',
+          salesman: 'wwq',
+          
+        }, {
+          id: '12987124',
+          data: '2018-02-07',
+          name: 'ccccc',
+          cash: '324',
+          wechat: '1.9',
+          alipay: '26',
+          cardpay: '9',
+          sales: '66',
+          volume: '33',
+          number: '21',
+          items: '21',
+          total: '21',
+          activity: 'asa',
+          remarks: 'aaaaaaaaa',
+          salesman: '王小虎'
+
+        }, {
+          id: '12987123',
+          data: '2018-02-07',
+          name: 'bbbbb',
+          cash: '165',
+          wechat: '4.43',
+          alipay: '32',
+          cardpay: '12',
+          sales: '21',
+          volume: '33',
+          number: '25',
+          items: '25',
+          total: '25',
+          activity: 'sasaa',
+          remarks: 'aaaaaaa',
+          salesman: '2王小虎5',
+          
+        }, {
+          id: '12987124',
+          data: '2018-02-07',
+          name: 'ccccc',
+          cash: '324',
+          wechat: '1.9',
+          alipay: '26',
+          cardpay: '9',
+          sales: '66',
+          volume: '33',
+          number: '21',
+          items: '21',
+          total: '21',
+          activity: 'asa',
+          remarks: 'aaaaaaaaa',
+          salesman: '王小虎1'
+
+        }, {
+          id: '12987123',
+          data: '2018-02-07',
+          name: 'bbbbb',
+          cash: '165',
+          wechat: '4.43',
+          alipay: '32',
+          cardpay: '12',
+          sales: '21',
+          volume: '33',
+          number: '25',
+          items: '25',
+          total: '25',
+          activity: 'sasaa',
+          remarks: 'aaaaaaa',
+          salesman: '2王小虎52',
+          
+        }, {
+          id: '12987124',
+          data: '2018-02-07',
+          name: 'ccccc',
+          cash: '324',
+          wechat: '1.9',
+          alipay: '26',
+          cardpay: '9',
+          sales: '66',
+          volume: '33',
+          number: '21',
+          items: '21',
+          total: '21',
+          activity: 'asa',
+          remarks: 'aaaaaaaaa',
+          salesman: '王小虎3'
+
+        }, {
+        }, {
+        }, {
+        }, {
+          id: '12987125',
+          data: '2018-02-07',
+          name: 'dddddd',
+          cash: '621',
+          wechat: '2.2',
+          alipay: '6.7',
+          cardpay: '19',
+          sales: '21',
+          volume: '33',
+          number: '23',
+          items: '23',
+          total: '23',
+          activity: 'asa',
+          remarks: 'aaaaaaaaaaaaaaa',
+          salesman: '王小虎111'
+
+      }],
+        
+
+      }
+    },
+    methods: {
+      getSummaries(param) {
+        const { columns, data } = param;
+        const sums = [];
+        columns.forEach((column, index) => {
+          if (index === 0) {
+            sums[index] = '总计';
+            return;
+          }
+
+          if (index ===9) {
+            return;
+          }
+          if (index >= 11) {
+            return;
+          }
+          if (index === 1)
+          {
+            // sums[index] = index.total
+            return;
+          }
+
+          const values = data.map(item => Number(item[column.property]));
+          if (!values.every(value => isNaN(value))) {
+            sums[index] = values.reduce((prev, curr) => {
+              const value = Number(curr);
+              if (!isNaN(value)) {
+                return prev + curr;
+              } else {
+                return prev;
+              }
+            }, 0);
+
+            sums[index] = sums[index].toFixed(2);
+            if(index === 6 || index === 8){
+              return;
+            } else {
+              sums[index] += ' 元';
+            }
+            
+          } else {
+            sums[index] = 'N/A';
+          }
+        });
+        return sums;
+      },
+      seek() {
+        let a = this.value;
+        let b = this.value1;
+        console.log(a);
+        console.log(b);
+      },
+      create() {
+        console.log(this.form)
+      },
+
+      handleEdit(row) {
+        // console.log(this.form1);
+        console.log(row.name)
+        this.form1.name = row.name,
+        this.form1.region = row.region,
+        this.form1.money = row.money,
+        this.form1.number = row.number,
+        this.form1.activity = row.activity,
+        this.form1.name2 = row.name2,
+        this.form1.remarks = row.remarks
+      },
+      handleDelete(row) {
+        console.log(row);
+      }
+    }
+    
+}
+</script>
+<style scoped>
+.main {
+  width: 100%;
+}
+/* .www {
+  width: 60%;
+} */
+.www {
+  margin-left:15%;
+  width: 60%;
+}
+</style>

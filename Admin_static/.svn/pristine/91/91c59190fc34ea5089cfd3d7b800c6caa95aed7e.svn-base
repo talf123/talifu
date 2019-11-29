@@ -1,0 +1,467 @@
+<template>
+  <div class="content">
+    <silderBar></silderBar>
+    <div class="body_main">
+        <navBar></navBar>
+        <div class="main" :style="widthMain">
+            <div class="tips" id="{this.$route.name}">
+                <Breadcrumb separator="<b class='demo-breadcrumb-separator'>=></b>">
+                    <BreadcrumbItem :to="item.path" v-for="(item,index) in this.$route.meta.index" :key="index">{{item.name}}</BreadcrumbItem>
+                </Breadcrumb>
+            </div>
+            <!-- 查询 新增 -->
+            <div class="top">
+                <label>星级：</label>
+                    <Select v-model="starIndex" clearable size="small" style="width:150px">
+                        <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
+                <label>是否红人：</label>
+                    <Select v-model="nlabel" clearable size="small" style="width:120px">
+                        <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
+                <label>级别：</label>
+                    <Select v-model="ntype" clearable size="small" style="width:120px"> 
+                        <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
+                <label>主播IDx：</label>
+                    <Input v-model="query" size="small" style="width: 150px" />
+                <Button type="primary" size="small" @click="lookup">查询</Button>
+                <Button type="primary" size="small" @click="add">新建</Button>
+            </div>
+            <!-- 主页面内容 -->
+            <div class="center" >
+                <Table border :columns="columns" :data="tabledata" class="table"  ref="table">
+                    <template slot-scope="{ row }" slot="name">
+                        <strong>{{ row.name }}</strong>
+                    </template>
+                    <template slot-scope="{ row, index }" slot="action">
+                        <Button type="text" size="small" @click="update(row)">编辑</Button>
+                    </template>
+                </Table>
+            </div>
+            <!-- 遮罩层 -->
+            <div class="marsk" v-if="showNone"></div>
+            <!-- 新建页面 -->
+            <div class="pop" v-if="showNonecreate">
+                <Form :label-width="80">
+                    <FormItem label="主播idx：">
+                        <Input v-model="id" placeholder="请输入..."></Input>
+                        <p>批量添加格式:123123,234234,342432,432423,42342</p>
+                    </FormItem>
+                    <FormItem label="星级：">
+                        <Select v-model="pay">
+                             <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem label="是否红人：">
+                        <Select v-model="pay">
+                             <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem label="级别：">
+                        <Select v-model="pay">
+                             <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem>
+                        <Button type="primary" @click="newadd">保存</Button>
+                        <Button style="margin-left: 8px" type="dashed" @click="reset">重置</Button>
+                        <Button style="margin-left: 8px" @click="close">取消</Button>
+                    </FormItem>
+                </Form>      
+            </div>
+            <!-- 编辑页面 -->
+            <div class="pop" v-if="showNoneUpdate">
+                <Form :label-width="80">
+                    <FormItem label="主播idx：">
+                        <Input v-model="id" placeholder="请输入..."></Input>
+                    </FormItem>
+                    <FormItem label="主播昵称：">
+                        <Input v-model="money" placeholder="请输入..."></Input>
+                    </FormItem>
+                    <FormItem label="星级：">
+                        <Select v-model="pay">
+                            <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem label="是否红人：">
+                        <Select v-model="pay">
+                            <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem label="级别：">
+                        <Select v-model="pay">
+                            <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem>
+                        <Button type="primary" @click="updateadd">修改</Button>
+                        <Button style="margin-left: 8px" type="dashed" @click="reset">删除</Button>
+                        <Button style="margin-left: 8px" @click="close">返回</Button>
+                    </FormItem>
+                </Form>      
+            </div>
+            <!-- 分页页面 -->
+            <div class="bottom">
+                <Page :total="count" :current='page' show-total show-elevator @on-change='fenye'/>
+            </div>
+        </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import {square} from '../../../assets/js/download'
+export default {
+    name: 'Index',
+    data () {
+        return {
+            widthMain:{width:''},//table组件自适应
+            tagData:null,//tag数据
+            colorName:'',//对比的tag名字
+            tagDataLength:true,//可取消的状态
+
+            starIndex: 0, // 查询功能 星级 绑定的数据
+            nlabel: 0, // 查询功能 红人 绑定的数据
+            ntype: 0, // 查询功能 级别 绑定的数据
+            idx: null, // 查询功能 主播idx 绑定的数据
+            page: 1, // 当前页码
+            pagesize: 10, //每页条数
+
+            query: null, // 查询功能idx
+            count: 0,
+
+            showNone: false, // 控制页面遮罩层开关
+            showNoneUpdate: false, // 修改页面弹出控制
+            showNonecreate: false, // 新增页面弹出控制
+            cityList: [ // 查询条件
+                {
+                    value: 'Android',
+                    label: 'Android'
+                },
+                {
+                    value: 'iPhone',
+                    label: 'iPhone'
+                },
+                {
+                    value: 'AppStore',
+                    label: 'AppStore'
+                },
+                {
+                    value: 'taiwangooglestore',
+                    label: '台湾googlestore'
+                },
+                {
+                    value: 'taiwanAppStore',
+                    label: '台湾AppStore'
+                }
+            ],
+            // 表格列名称
+            columns: [
+                {title: '主播IDX',key: 'useridx'},
+                {title: '主播昵称',key: 'songerName'}, 
+                {title: '星级',key: 'starlevel'},
+                {title: '是否红人',key: 'nlabel'},
+                {title: '级别',key: 'ntype'},
+                {title: '最后修改时间',key: 'addtime'},
+                {title: '操作',slot: 'action',align: 'center'}
+                ],
+            tabledata: [ // 数据表数据
+                {
+                    pay: 'Android', // 支付类型
+                    id: 'com.sunday.80', // 商品ID
+                    money: 1, // 金额
+                    volue: 7000, //  币值
+                    gift: 0, // 礼物赠送币
+                    address: 'New York No. 1 Lake Park' // 说明
+                },
+                {
+                    pay: 'taiwanAppStore',
+                    id: 'com.sunday.30',
+                    money: 1.99,
+                    volue: 15000,
+                    gift: 0,
+                    address: 'London No. 1 Lake Park'
+                },
+                {
+                    pay: 'iPhone',
+                    id: 'com.bunny.5',
+                    money: 3.99,
+                    volue: 30000,
+                    gift: 0,
+                    address: 'Sydney No. 1 Lake Park'
+                },
+                {
+                    pay: 'AppStore',
+                    id: 'com.bunny.6',
+                    money: 1,
+                    volue: 7000,
+                    gift: 0,
+                    address: 'Ottawa No. 2 Lake Park'
+                }
+            ],
+
+            resets: { // 暂存页面内容数据
+                pay: '',  // 支付类型
+                id: '', // 商品ID
+                money: '', // 支付金额
+                volue: '', // 币值
+                gift: '', // 赠送币
+                address: '' // 说明
+            }
+        }
+    },
+    created() {
+        window.addEventListener('resize', this.getWidth);
+        this.getWidth();
+        this.totlist();
+    },
+    destroyed () {
+        window.removeEventListener('resize', this.getWidth)
+    },
+    mounted () {
+        
+    },
+    computed: {
+        
+    },
+    methods: {
+        //table组件处理函数
+        getWidth:function(){
+                var wid =document.body.clientWidth;        //网页可见区域宽(body)
+                    this.widthMain.width=wid-200+'px';
+        },
+        getTag:function(){
+            this.tagData=JSON.parse(localStorage.getItem("g_tagMArry"));
+            this.colorName=this.$route.meta.name;
+        },
+        tagClose:function(item){
+            if(this.tagData.length>1){
+                let arr3 = this.tagData;
+                let arr4 = arr3.filter(item3=>{
+                    return item3.name != item.name;     
+                })
+                this.tagData=arr4;
+                localStorage.setItem('g_tagMArry',JSON.stringify(arr4))
+                if(item.name==this.$route.meta.name){
+                        this.$router.push({path: arr4[0].index[2].path});
+                        this.colorName=arr4[0].name;
+                }else{
+                }
+            }else{
+                localStorage.removeItem('g_tagMArry');
+                this.$router.push({path:'/'});
+            }   
+        },
+        tagChange:function(item){
+            this.colorName=item.name;
+            this.$router.push({path: item.index[2].path});
+        },
+        clearAll:function(){
+            let arry =[];
+            arry.push(this.$route.meta);
+            this.tagData=arry;
+            localStorage.setItem('g_tagMArry',JSON.stringify(arry))
+        },
+
+        totlist: function() { // 总列表信息
+            let token =localStorage.getItem('h_g_access_token');
+            this.$axios({
+                url: '/api/BPMService/User/GetLive_StarSongerListAsync',
+                method: 'get',
+                //params 参数必写 , 如果没有参数传{}也可以
+                headers:{
+                        Authorization:'Bearer '+token
+                },
+                params:{
+                    page: Number(this.page), // 当前页码
+                    pagesize: Number(this.pagesize), // 每页条数
+                    idx: 0, // 用户idx
+                    starIndex: Number(this.starIndex), // 星级
+                    nlabel: Number(this.nlabel), // 是否红人
+                    ntype: Number(this.ntype) // 级别
+                },
+            })
+            .then((res)=>{
+                console.log(res)
+                if(res.data.code == 1){ 
+                    this.$Message.success('成功')
+                    this.tabledata = res.data.data.pager.live_StarSongers;
+                    this.count = res.data.data.pager.count;
+                } else if (res.data.code == 0){
+                    this.$Message.warning('无数据');
+                } else if (res.data.code == -1){
+                    this.$Message.error('异常')
+                    this.$router.push({path: '/'});
+                }
+            })
+            .catch((err)=>{
+                console.log(err)
+                if(err.response.status==401){
+                    this.$Message.error('登录过期，请重新登录');
+                    this.$router.push({path: '/login'});
+                }
+            })
+        },
+        update: function(row) { // 修改页面
+            this.resets.pay = row.idx
+            this.resets.id = row.songerName
+            this.resets.money = row.money
+            this.resets.volue = row.volue
+            this.resets.gift = row.gift
+            this.resets.address = row.address,
+
+            this.showNone = true,
+            this.showNoneUpdate = true,
+            this.pay = row.useridx,
+            this.id = row.songerName,
+            this.money = row.money,
+            this.volue = row.volue,
+            this.gift = row.gift,
+            this.address = row.address,
+            console.log(row)
+        },
+        reset: function(row) { // 修改页面重置功能
+            this.pay = this.resets.pay,
+            this.id = this.resets.id,
+            this.money = this.resets.money,
+            this.volue = this.resets.volue,
+            this.gift = this.resets.gift,
+            this.address = this.resets.address
+        },
+        updateadd: function() { // 修改页面保存
+            this.showNone = false,
+            this.showNoneUpdate = false,
+            console.log(this.id)
+        },
+        close: function () { // 新建页面和修改页面取消修改
+            this.showNone = false, // 遮罩层关闭
+            this.showNoneUpdate = false, // 修改页面关闭
+            this.showNonecreate = false, // 新建页面关闭
+
+            this.resets.pay = null, // 页面重置功能 使用的缓存数据清空
+            this.resets.id = null,
+            this.resets.money = null,
+            this.resets.volue = null,
+            this.resets.gift = null,
+            this.resets.address = null
+
+        },
+        remove: function(row) { // 删除
+            this.data.splice(index, 1);
+            console.log(row.id)
+        },
+        add: function () { // 新建数据页面
+            this.showNone = true,
+            this.showNonecreate = true,
+            this.pay = null, // 清空数据，防止之前点击过修改造成数据缓存
+            this.id = null,
+            this.money = null,
+            this.volue = null,
+            this.gift = null,
+            this.address = null
+        },
+        newadd: function () { // 新建页面保存
+            this.showNone = false,
+            this.showNonecreate = false,
+            console.log(this.id)
+        },
+        lookup: function () { // 查找
+            let token =localStorage.getItem('h_g_access_token');
+            this.$axios({
+                url: '/api/BPMService/User/GetLive_StarSongerListAsync',
+                method: 'get',
+                //params 参数必写 , 如果没有参数传{}也可以
+                headers:{
+                        Authorization:'Bearer '+token
+                },
+                params:{
+                    page: 1, // 当前页码
+                    pagesize: 10, // 每页条数
+                    idx: Number(this.query), // 用户idx
+                    starIndex: this.starIndex, // 星级
+                    nlabel: this.nlabel, // 是否红人
+                    ntype: this.ntype // 级别
+                },
+            })
+            .then((res)=>{
+                // console.log(res)
+                if(res.data.code == 1){ 
+                    this.$Message.success('成功')
+                    this.tabledata = res.data.data.pager.live_StarSongers;
+                } else if (res.data.code == 0){
+                    this.$Message.warning('无数据');
+                } else if (res.data.code == -1){
+                    this.$Message.error('异常')
+                    this.$router.push({path: '/'});
+                }
+            })
+            .catch((err)=>{
+                console.log(err)
+                if(err.response.status==401){
+                    this.$Message.error('登录过期，请重新登录');
+                    this.$router.push({path: '/login'});
+                }
+            })
+
+        },
+        fenye: function (pager) { // 页面的分页功能
+            // console.log(pager)
+            this.page = pager
+            console.log(this.page)
+            this.totlist();
+        },
+        handleSelectAll (status) { // table表格全选功能
+            this.$refs.table.selectAll(status);
+        }
+    }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+.main{  // 主页面样式
+    overflow-x: scroll;
+    overflow: hidden;
+    position: relative;
+    .tips{ // 主页面
+        text-align: left;
+    }
+    .top{margin-top:10px; margin-left: 20px; display: flex; padding: 5px;  // 表头部分 查找添加 样式
+          button{
+              margin-left: 15px;
+          }
+          label{
+              margin-left: 15px;
+            //   margin-right: 15px;
+              font-size: 15px;
+          }
+    }
+    .center{width:100%; margin-top:20px;
+        button {
+            margin-right: 5px
+        }
+    }  // 页面中部 表格部分样式
+    .bottom{width:100%; margin-top:15px;} // 页面底部 分页部分样式
+    .marsk{ // 遮罩层
+        position: fixed;
+        top: 0;
+        left: 0; 
+        width: 100%;
+        height: 100%;
+        background: #000;
+        opacity: 0.5;
+        z-index: 2999;
+    }
+    .pop{  // 弹出层
+        padding:5% 4%;
+        position: fixed;
+        top: 12%;
+        left: 23%; 
+        width: 60%;
+        height: 75%;
+        background: #fff;
+        z-index: 3001;
+    }
+}
+</style>

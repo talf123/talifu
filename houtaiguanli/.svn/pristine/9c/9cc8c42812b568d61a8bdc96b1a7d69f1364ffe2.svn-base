@@ -1,0 +1,422 @@
+<template>
+<div class='sale'>
+  <div class="block">
+    <span class="demonstration">查找筛选</span>
+    <el-date-picker
+      v-model="value1"
+      type="daterange"
+      range-separator="至"
+      start-placeholder="开始日期"
+      end-placeholder="结束日期"
+       value-format="yyyy-MM-dd">
+    </el-date-picker>
+
+   <el-select v-model="value" clearable placeholder="请选择业务员">
+    <el-option
+      v-for="item in tableData"
+      :key="item.salesman"
+      :label="item.label"
+      :value="item.salesman">
+    </el-option>
+  </el-select>
+  <span class='button'>
+  <el-button type="info"  @click="lookup()">查询</el-button>
+  <el-button type="info">导出Excel</el-button>
+  </span>
+  </div>
+<div class="table">
+  <el-table
+    :data="tableData"
+    border
+    height="500"
+    
+    :summary-method="getSummaries"
+    show-summary
+    style="width: 100%; margin-top: 20px;">
+    <el-table-column
+      prop="data"
+      type="data"
+      label="日期"
+      width="100">
+    </el-table-column>
+    <el-table-column
+      prop="name"
+      width="150"
+      label="产品名称">
+    </el-table-column>
+    <el-table-column
+      prop="cash"
+      label="现金">
+    </el-table-column>
+    <el-table-column
+      prop="wechat"
+      label="微信">
+    </el-table-column>
+    <el-table-column
+      prop="alipay"
+      label="支付宝">
+    </el-table-column>
+    <el-table-column
+      prop="cardpay"
+      label="刷卡">
+    </el-table-column>
+    <el-table-column
+      prop="sales"
+      label="销售数量">
+    </el-table-column>
+    <el-table-column
+      prop="volume"
+      label="销售额（元）"
+      width="100px;">
+    </el-table-column>
+    <el-table-column
+      prop="number"
+      label="库存数量">
+    </el-table-column>
+    <el-table-column
+      prop="items"
+      label="支出项">
+    </el-table-column>
+    <el-table-column
+      prop="total"
+      label="支出总计">
+    </el-table-column>
+    <el-table-column
+      prop="activity"
+      width="150"
+      label="活动">
+    </el-table-column>
+    <el-table-column
+      prop="remarks"
+      width="150"
+      label="备注">
+    </el-table-column>
+    <el-table-column
+      prop="salesman"
+      label="业务员">
+    </el-table-column>
+
+
+    <el-table-column label="操作" width="150px;">
+      <template slot-scope="scope">
+        <el-button
+          size="mini"
+          @click="handleEdit(scope.$index,tableData),dialogFormVisible = true">修改</el-button>
+            <el-dialog title="内容修改" :visible.sync="dialogFormVisible">
+                  <el-form :model="form">
+                    <el-form-item label="日期" :label-width="formLabelWidth">
+                      <el-input v-model='form.data' autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="产品名称" :label-width="formLabelWidth">
+                      <el-input v-model='form.name' autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="现金" :label-width="formLabelWidth">
+                      <el-input v-model='form.cash' autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="微信" :label-width="formLabelWidth">
+                      <el-input v-model='form.wechat' autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="支付宝" :label-width="formLabelWidth">
+                      <el-input v-model='form.alipay' autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="刷卡" :label-width="formLabelWidth">
+                      <el-input v-model='form.cardpay' autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="销售数量" :label-width="formLabelWidth">
+                      <el-input v-model='form.sales' autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="销售额（元）" :label-width="formLabelWidth">
+                      <el-input v-model='form.volume' autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="库存数量" :label-width="formLabelWidth">
+                      <el-input v-model='form.number' autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="支出项" :label-width="formLabelWidth">
+                      <el-input v-model='form.items' autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="支出总计" :label-width="formLabelWidth">
+                      <el-input v-model='form.total' autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="活动" :label-width="formLabelWidth">
+                      <el-input v-model='form.activity' autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="备注" :label-width="formLabelWidth">
+                      <el-input v-model='form.remarks' autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="业务员" :label-width="formLabelWidth">
+                      <el-input v-model='form.salesman' autocomplete="off"></el-input>
+                    </el-form-item>
+                    <!-- <el-form-item label="活动区域" :label-width="formLabelWidth">
+                      <el-select v-model="form.region" placeholder="请选择活动区域">
+                        <el-option label="区域一" value="shanghai"></el-option>
+                        <el-option label="区域二" value="beijing"></el-option>
+                      </el-select>
+                    </el-form-item> -->
+                  </el-form>
+                  <div slot="footer" class="dialog-footer">
+                    <el-button @click="dialogFormVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+                  </div>
+                </el-dialog>
+        <el-button
+          size="mini"
+          type="danger"
+          @click="handleDelete(scope.$index, tableData)">删除</el-button>
+      </template>
+    </el-table-column>
+  </el-table>
+</div>
+
+<!-- <template>
+  <el-button type="text" @click="dialogFormVisible = true">打开嵌套表单的 Dialog</el-button>
+
+<el-dialog title="收货地址" :visible.sync="dialogFormVisible">
+  <el-form :model="form">
+    <el-form-item label="活动名称" :label-width="formLabelWidth">
+      <el-input v-model="form.name" autocomplete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="活动区域" :label-width="formLabelWidth">
+      <el-select v-model="form.region" placeholder="请选择活动区域">
+        <el-option label="区域一" value="shanghai"></el-option>
+        <el-option label="区域二" value="beijing"></el-option>
+      </el-select>
+    </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogFormVisible = false">取 消</el-button>
+    <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+  </div>
+</el-dialog>
+</template> -->
+
+</div>
+</template>
+<script>
+
+  export default {
+    name: 'login',
+    data() {
+      
+      return {
+        dialogFormVisible: false,
+        formLabelWidth: '120px',
+      form: {
+          data: '',
+          name: '',
+          cash: '',
+          weChat: '',
+          alipay: '',
+          cardpay: '',
+          sales: '',
+          volume: '',
+          number: '',
+          items: '',
+          total: '',
+          remarks: '',
+          salesman: '',
+
+          delivery: false,
+          type: [],
+          resource: '',
+          desc: ''
+        },
+
+    value1: '',
+        // options: [{
+        //     value: '黄金糕',
+        //     label: '黄金糕'
+        //     }, {
+        //     value: '双皮奶',
+        //     label: '双皮奶'
+        //     }, {
+        //     value: '蚵仔煎',
+        //     label: '蚵仔煎'
+        //     }, {
+        //     value: '龙须面',
+        //     label: '龙须面'
+        //     }, {
+        //     value: '北京烤鸭',
+        //     label: '北京烤鸭'
+        // }],
+        value: '',
+      tableData: [{
+          id: '12987122',
+          data: '2018-02-07',
+          name: 'aaaaa',
+          cash: '234',
+          wechat: '3.2',
+          alipay: '67',
+          cardpay: '10',
+          sales: '10',
+          volume: '33',
+          number: '33',
+          items: '33',
+          total: '33',
+          activity: '3asas3',
+          remarks: 'aaaaa',
+          salesman: 'qqq121',
+          label: 1,
+        }, {
+          id: '12987123',
+          data: '2018-02-07',
+          name: 'bbbbb',
+          cash: '165',
+          wechat: '4.43',
+          alipay: '32',
+          cardpay: '12',
+          sales: '21',
+          volume: '33',
+          number: '25',
+          items: '25',
+          total: '25',
+          activity: 'sasaa',
+          remarks: 'aaaaaaa',
+          salesman: '2王小虎5',
+          
+        }, {
+          id: '12987124',
+          data: '2018-02-07',
+          name: 'ccccc',
+          cash: '324',
+          wechat: '1.9',
+          alipay: '26',
+          cardpay: '9',
+          sales: '66',
+          volume: '33',
+          number: '21',
+          items: '21',
+          total: '21',
+          activity: 'asa',
+          remarks: 'aaaaaaaaa',
+          salesman: '王小虎'
+
+        }, {
+          id: '12987125',
+          data: '2018-02-07',
+          name: 'dddddd',
+          cash: '621',
+          wechat: '2.2',
+          alipay: '6.7',
+          cardpay: '19',
+          sales: '21',
+          volume: '33',
+          number: '23',
+          items: '23',
+          total: '23',
+          activity: 'asa',
+          remarks: 'aaaaaaaaaaaaaaa',
+          salesman: '王小虎111'
+
+        }]
+      }
+    },
+    methods: {
+      handleClick(row) {
+        console.log(row);
+      },   
+       getSummaries(param) {
+        const { columns, data } = param;
+        const sums = [];
+        columns.forEach((column, index) => {
+          if (index === 0) {
+            sums[index] = '总价';
+            return;
+          }
+          const values = data.map(item => Number(item[column.property]));
+          if (!values.every(value => isNaN(value))) {
+            sums[index] = values.reduce((prev, curr) => {
+              const value = Number(curr);
+              if (!isNaN(value)) {
+                return prev + curr;
+              } else {
+                return prev;
+              }
+            }, 0);
+            sums[index] += ' ';
+          } else {
+            sums[index] = 'N/A';
+          }
+        });
+        return sums;
+      },
+
+      handleEdit(index, row) {
+        // console.log(index, row);
+        console.log(index,row[index].id);
+        
+        this.form.data = row[index].data;
+        this.form.name = row[index].name;
+        this.form.cash = row[index].cash;
+        this.form.wechat = row[index].wechat;
+        this.form.alipay = row[index].alipay;
+        this.form.cardpay = row[index].cardpay;
+        this.form.sales = row[index].sales;
+        this.form.volume = row[index].volume
+        this.form.number = row[index].number
+        this.form.items = row[index].items
+        this.form.total = row[index].total
+        this.form.activity = row[index].activity
+        this.form.remarks = row[index].remarks
+        this.form.salesman = row[index].salesman
+      },
+      //  dialogFormVisible(index,row) {
+      //  },
+      handleDelete(index, row) {
+        console.log(index, row);
+        row.splice(index,1);
+      },
+
+      lookup() {
+        // for (let i;i <= this.tableData.length; i++)
+        // {
+        //   if(this.value1 == this.tableData[i].data)
+        //   {
+        //     console.log('aaasa');
+        //   }else{
+        //     console.log('aaaaaaa');
+        //   }
+        // } 
+        console.log(this.value1)
+        console.log(this.value)
+      }
+
+    }
+}
+</script>
+<style scoped>
+.block {
+    margin-left: 150px;
+}
+.button {
+  margin-left: 5px;
+}
+.table {
+  margin-left: 80px;
+  margin-top: 35px;
+  width: 1000px;
+}
+.el-table__footer {
+  background-color: aquamarine !important;
+}
+.el-table__footer-wrapper {
+  background-color:blue !important;
+}
+</style>
+
+
+
+        // let token =localStorage.getItem('g_token');
+        // this.$axios({  
+        //   url: '/api/AdminManager/AdminList?selectPageNum=1&everyPageNum=10',
+        //   method: 'get',
+        //   //params参数必写 , 如果没有参数传{}也可以
+        //   headers:{
+        //         Authorization:'Bearer '+token
+        //   },
+        //   data:{  
+        //   }
+        // })
+        // .then((res)=>{
+        // })
+        // .catch((err)=>{
+        // })

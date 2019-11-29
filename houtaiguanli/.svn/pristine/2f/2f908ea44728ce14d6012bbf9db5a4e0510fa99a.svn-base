@@ -1,0 +1,264 @@
+<template>
+<div class='sale'>
+  <div class="block">
+    <span class="demonstration">默认</span>
+    <el-date-picker
+      v-model="value1"
+      type="daterange"
+      range-separator="至"
+      start-placeholder="开始日期"
+      end-placeholder="结束日期">
+    </el-date-picker>
+
+   <el-select v-model="value" clearable placeholder="请选择业务员">
+    <el-option
+      v-for="item in options"
+      :key="item.value"
+      :label="item.label"
+      :value="item.value">
+    </el-option>
+  </el-select>
+  <span class='button'>
+  <el-button type="info">查询</el-button>
+  <el-button type="info">导出Excel</el-button>
+  </span>
+  </div>
+<div class="table">
+  <el-table
+    :data="tableData"
+    border
+    height="500"
+    :summary-method="getSummaries"
+    show-summary
+    style="width: 100%; margin-top: 20px; ">
+    <el-table-column
+      prop="id"
+      label="ID"
+      width="180">
+    </el-table-column>
+    <el-table-column
+      prop="name"
+      label="姓名">
+    </el-table-column>
+    <el-table-column
+      prop="amount1"
+      label="数值 1（元）">
+    </el-table-column>
+    <el-table-column
+      prop="amount2"
+      label="数值 2（元）">
+    </el-table-column>
+    <el-table-column
+      prop="amount3"
+      label="数值 3（元）">
+    </el-table-column>
+    <el-table-column
+      prop="amount3"
+      label="数值 3（元）">
+    </el-table-column>
+    <el-table-column
+      prop="amount3"
+      label="数值 3（元）">
+    </el-table-column>
+    <el-table-column
+      prop="amount3"
+      label="数值 3（元）">
+    </el-table-column>
+    <el-table-column
+      prop="amount3"
+      label="数值 3（元）">
+    </el-table-column>
+    <el-table-column
+      prop="amount3"
+      label="数值 3（元）">
+    </el-table-column>
+    <el-table-column
+      prop="amount3"
+      label="数值 3（元）">
+    </el-table-column>
+    <el-table-column
+      prop="amount3"
+      label="数值 3（元）">
+    </el-table-column>
+    <el-table-column
+      prop="amount3"
+      label="数值 3（元）">
+    </el-table-column>
+    <el-table-column
+      prop="amount3"
+      label="数值 3（元）">
+    </el-table-column>
+    <el-table-column
+      prop="amount3"
+      label="数值 3（元）">
+    </el-table-column>
+    <el-table-column
+      prop="amount3"
+      label="数值 3（元）">
+    </el-table-column>
+
+    <el-table-column label="操作" width="150px;">
+      <template slot-scope="scope">
+        <el-button
+          size="mini"
+          @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+        <el-button
+          size="mini"
+          type="danger"
+          @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+      </template>
+    </el-table-column>
+
+  </el-table>
+</div>
+</div>
+</template>
+<script>
+
+  export default {
+    name: 'login',
+    data() {
+      
+      return {
+        value1: '',
+        options: [{
+            value: '选项1',
+            label: '黄金糕'
+            }, {
+            value: '选项2',
+            label: '双皮奶'
+            }, {
+            value: '选项3',
+            label: '蚵仔煎'
+            }, {
+            value: '选项4',
+            label: '龙须面'
+            }, {
+            value: '选项5',
+            label: '北京烤鸭'
+        }],
+        value: '',
+      tableData: [{
+          id: '12987122',
+          name: '王小虎',
+          amount1: '234',
+          amount2: '3.2',
+          amount3: 10
+        }, {
+          id: '12987123',
+          name: '王小虎',
+          amount1: '165',
+          amount2: '4.43',
+          amount3: 12
+        }, {
+          id: '12987124',
+          name: '王小虎',
+          amount1: '324',
+          amount2: '1.9',
+          amount3: 9
+        }, {
+          id: '12987125',
+          name: '王小虎',
+          amount1: '621',
+          amount2: '2.2',
+          amount3: 17
+        },{
+          id: '12987125',
+          name: '王小虎',
+          amount1: '621',
+          amount2: '2.2',
+          amount3: 17
+        },{
+          id: '12987125',
+          name: '王小虎',
+          amount1: '621',
+          amount2: '2.2',
+          amount3: 17
+        },{
+          id: '12987125',
+          name: '王小虎',
+          amount1: '621',
+          amount2: '2.2',
+          amount3: 17
+        }, {
+          id: '12987125',
+          name: '王小虎',
+          amount1: '621',
+          amount2: '2.2',
+          amount3: 17
+        },{
+          id: '12987125',
+          name: '王小虎',
+          amount1: '621',
+          amount2: '2.2',
+          amount3: 17
+        }, {
+          id: '12987126',
+          name: '王小虎',
+          amount1: '539',
+          amount2: '4.1',
+          amount3: 15
+      }]
+      }
+    },
+    methods: {
+      handleClick(row) {
+        console.log(row);
+      },
+       getSummaries(param) {
+        const { columns, data } = param;
+        const sums = [];
+        columns.forEach((column, index) => {
+          if (index === 0) {
+            sums[index] = '总价';
+            return;
+          }
+          const values = data.map(item => Number(item[column.property]));
+          if (!values.every(value => isNaN(value))) {
+            sums[index] = values.reduce((prev, curr) => {
+              const value = Number(curr);
+              if (!isNaN(value)) {
+                return prev + curr;
+              } else {
+                return prev;
+              }
+            }, 0);
+            sums[index] += ' 元';
+          } else {
+            sums[index] = 'N/A';
+          }
+        });
+
+        return sums;
+      },
+
+      handleEdit(index, row) {
+        console.log(index, row);
+      },
+      handleDelete(index, row) {
+        console.log(index, row);
+      }
+    }
+}
+</script>
+<style scoped>
+.sale {
+}
+.block {
+    margin-left: 150px;
+}
+.button {
+  margin-left: 5px;
+}
+.table {
+  margin-left: 80px;
+  margin-top: 35px;
+  width: 1000px;
+}
+.el-table__footer {
+  background-color: aquamarine !important;
+}
+.el-table__footer-wrapper {
+  background-color:blue !important;
+}
+</style>

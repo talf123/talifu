@@ -1,0 +1,86 @@
+<template>
+<div class="content">
+    <silderBar></silderBar>
+    <div class="body_main">
+        <navBar></navBar>
+        <div class="main" :style="widthMain">
+            <div class="tips" id="{this.$route.name}">
+                <Breadcrumb separator="<b class='demo-breadcrumb-separator'>=></b>">
+                    <BreadcrumbItem :to="item.path" v-for="(item,index) in this.$route.meta.index" :key="index">{{item.name}}</BreadcrumbItem>
+                </Breadcrumb>
+            </div>
+            <!-- 删除 -->
+            <div class="top">
+                <label>主播IDX：</label>
+                    <Input size="small" v-model="id" placeholder="IDX" style="width: 180px" />
+                    <Button size="small" type="primary" @click="remove">删除</Button>
+            </div>
+        </div>
+    </div>
+</div>
+</template>
+
+<script>
+import {square} from '../../../assets/js/download'
+export default {
+  name: 'Index',
+  data () {
+    return {
+        widthMain:{width:''},//table组件自适应
+        id: '' //删除功能ID
+    }
+  },
+  created() {
+        window.addEventListener('resize', this.getWidth);
+        this.getWidth()
+  },
+  destroyed () {
+        window.removeEventListener('resize', this.getWidth)
+  },
+  mounted () {
+      
+  },
+  computed: {
+      
+  },
+  methods: {
+    //table组件处理函数
+    getWidth:function(){
+            var wid =document.body.clientWidth;        //网页可见区域宽(body)
+            this.widthMain.width=wid-200+'px';
+    },
+    remove: function(index,row) { // 删除
+        this.data.splice(index, 1);
+        console.log(row.id)
+    }
+  }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+.main{  // 主页面样式
+    overflow-x: scroll;
+    overflow: hidden;
+    position: relative;
+    .tips{ // 主页面
+        text-align: left;
+    }
+    .top{margin-top:10px; margin-left: 20px; display: flex; padding: 5px;  // 表头部分 查找添加 样式
+          button{
+              margin-left: 15px;
+          }
+          label{
+              margin-left: 15px;
+              margin-right: 15px;
+              font-size: 15px;
+          }
+    }
+    .center{width:100%; margin-top:20px;
+        button {
+            margin-right: 5px
+        }
+    }  // 页面中部 表格部分样式
+    .bottom{width:100%; margin-top:15px;} // 页面底部 分页部分样式
+}
+</style>

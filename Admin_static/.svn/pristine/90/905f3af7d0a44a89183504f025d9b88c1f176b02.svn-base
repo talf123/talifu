@@ -1,0 +1,308 @@
+<template>
+  <div class="content">
+    <navBar></navBar>
+    <div class="body_main">
+        <silderBar></silderBar>
+        <div class="main">
+          <!-- 查询 新增 -->
+          <div class="top">
+            <label>支付类型：</label>
+              <Select v-model="model1" size="small" style="width:150px">
+                  <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              </Select>
+              <Button type="primary" size="small">查询</Button>
+              <Button type="primary" size="small" @click="create">新增</Button>
+          </div>
+          <!-- 主页面内容 -->
+          <div class="center">
+            <Table border :columns="columns" :data="data">
+                <template slot-scope="{ row }" slot="name">
+                    <strong>{{ row.name }}</strong>
+                </template>
+                <template slot-scope="{ row, index }" slot="action">
+                    <Button type="text" size="small" style="margin-right: 5px" @click="update(row)">修改</Button>
+                    <Button type="text" size="small" @click="remove(index,1)">删除</Button>
+                </template>
+            </Table>
+          </div>
+          <!-- 遮罩层 -->
+          <div class="marsk" v-if="showNone"></div>
+          <!-- 新增页面 -->
+            <div class="pop" v-if="showNoneadd">
+                <Form :model="addItem" :label-width="80">
+                    <FormItem label="Select">
+                        <Select v-model="addItem.pay">
+                            <Option value="Android">Android</Option>
+                            <Option value="iPhone">iPhone</Option>
+                            <Option value="AppStore">AppStore</Option>
+                            <Option value="taiwangooglestore">台湾googlestore</Option>
+                            <Option value="taiwanAppStore">台湾AppStore</Option>
+                        </Select>
+                    </FormItem>
+                    <!-- <FormItem label="Input">
+                        <Input v-model="addItem.pay" placeholder="Enter something..."></Input>
+                    </FormItem> -->
+                    <FormItem label="Input">
+                        <Input v-model="addItem.id" placeholder="Enter something..."></Input>
+                    </FormItem>
+                    <FormItem label="Input">
+                        <Input v-model="addItem.money" placeholder="Enter something..."></Input>
+                    </FormItem>
+                    <FormItem label="Input">
+                        <Input v-model="addItem.volue" placeholder="Enter something..."></Input>
+                    </FormItem>
+                    <FormItem label="Input">
+                        <Input v-model="addItem.gift" placeholder="Enter something..."></Input>
+                    </FormItem>
+                    <FormItem label="Text">
+                        <Input v-model="addItem.address" type="textarea" :autosize="{minRows: 3,maxRows: 3}" placeholder="Enter something..."></Input>
+                    </FormItem>
+                    <FormItem>
+                        <Button type="primary" @click="newadd">保存</Button>
+                        <Button type="primary" @click="reset">重置</Button>
+                        <Button style="margin-left: 8px" @click="close">取消</Button>
+                    </FormItem>
+                </Form>      
+            </div>
+          <!-- 修改编辑页面 -->
+          <div class="pop" v-if="showNoneUpdate">
+            <Form :model="addItem" :label-width="80">
+                <FormItem label="Select">
+                    <Select v-model="addItem.pay">
+                        <Option value="Android">Android</Option>
+                        <Option value="iPhone">iPhone</Option>
+                        <Option value="AppStore">AppStore</Option>
+                        <Option value="taiwangooglestore">台湾googlestore</Option>
+                        <Option value="taiwanAppStore">台湾AppStore</Option>
+                    </Select>
+                </FormItem>
+                <!-- <FormItem label="Input">
+                    <Input v-model="addItem.pay" placeholder="Enter something..."></Input>
+                </FormItem> -->
+                <FormItem label="Input">
+                    <Input v-model="addItem.id" placeholder="Enter something..."></Input>
+                </FormItem>
+                <FormItem label="Input">
+                    <Input v-model="addItem.money" placeholder="Enter something..."></Input>
+                </FormItem>
+                <FormItem label="Input">
+                    <Input v-model="addItem.volue" placeholder="Enter something..."></Input>
+                </FormItem>
+                <FormItem label="Input">
+                    <Input v-model="addItem.gift" placeholder="Enter something..."></Input>
+                </FormItem>
+                <FormItem label="Text">
+                    <Input v-model="addItem.address" type="textarea" :autosize="{minRows: 3,maxRows: 3}" placeholder="Enter something..."></Input>
+                </FormItem>
+                <FormItem>
+                    <Button type="primary" @click="updateadd">保存</Button>
+                    <Button type="primary" @click="reset">重置</Button>
+                    <Button style="margin-left: 8px" @click="close">取消</Button>
+                </FormItem>
+            </Form>      
+            
+          </div>
+          <!-- 分页页面 -->
+          <div class="bottom">
+              <Page :total="100" show-total show-elevator/>
+          </div>
+        </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Index',
+  data () {
+    return {
+      // msg: 'Welcome to Your Vue.js App'
+          model1: '',
+          modal2: false,
+          showNone: false,
+          showNoneUpdate: false,
+          showNoneadd: false,
+          cityList: [ // 查询条件
+              {
+                  value: 'Android',
+                  label: 'Android'
+              },
+              {
+                  value: 'iPhone',
+                  label: 'iPhone'
+              },
+              {
+                  value: 'AppStore',
+                  label: 'AppStore'
+              },
+              {
+                  value: 'taiwangooglestore',
+                  label: '台湾googlestore'
+              },
+              {
+                  value: 'taiwanAppStore',
+                  label: '台湾AppStore'
+              }
+          ],
+          columns: [ // 表格列名称
+              {
+                  title: '支付类型',
+                  key: 'pay'
+              },
+              {
+                  title: '商品ID',
+                  key: 'id'
+              },
+              {
+                  title: '金额',
+                  key: 'money'
+              },
+              {
+                  title: '币值',
+                  key: 'volue'
+              },
+              {
+                  title: '赠送币',
+                  key: 'gift'
+              },
+              {
+                  title: '说明',
+                  key: 'address'
+              },
+              {
+                  title: '操作',
+                  slot: 'action',
+                  width: 150,
+                  align: 'center'
+              }
+          ],
+          data: [ // 数据表数据
+              {
+                  pay: 'Android',
+                  id: 'com.sunday.80',
+                  money: 1,
+                  volue: 7000,
+                  gift: 0,
+                  address: 'New York No. 1 Lake Park'
+              },
+              {
+                  pay: 'taiwanAppStore',
+                  id: 'com.sunday.30',
+                  money: 1.99,
+                  volue: 15000,
+                  gift: 0,
+                  address: 'London No. 1 Lake Park'
+              },
+              {
+                  pay: 'iPhone',
+                  id: 'com.bunny.5',
+                  money: 3.99,
+                  volue: 30000,
+                  gift: 0,
+                  address: 'Sydney No. 1 Lake Park'
+              },
+              {
+                  pay: 'AppStore',
+                  id: 'com.bunny.6',
+                  money: 1,
+                  volue: 7000,
+                  gift: 0,
+                  address: 'Ottawa No. 2 Lake Park'
+              }
+          ],
+          addItem: { // 修改页面数据
+            pay: '',
+            id: '',
+            money: '',
+            volue: '',
+            gift: '',
+            address: ''
+           },
+           resets: {
+            pay: '',
+            id: '',
+            money: '',
+            volue: '',
+            gift: '',
+            address: ''
+           }
+    }
+  },
+  methods: {
+      update: function(row) { // 修改页面
+          this.resets.pay = row.pay
+          this.resets.id = row.id
+          this.resets.money = row.money
+          this.resets.volue = row.volue
+          this.resets.gift = row.gift
+          this.resets.address = row.address,
+
+          this.showNone = true,
+          this.showNoneUpdate = true,
+          this.addItem.pay = row.pay,
+          this.addItem.id = row.id,
+          this.addItem.money = row.money,
+          this.addItem.volue = row.volue,
+          this.addItem.gift = row.gift,
+          this.addItem.address = row.address,
+          console.log(row)
+      },
+      reset: function(row) { // 修改页面
+          this.showNone = true,
+          this.showNoneUpdate = true,
+          this.addItem.pay = this.resets.pay,
+          this.addItem.id = this.resets.id,
+          this.addItem.money = this.resets.money,
+          this.addItem.volue = this.resets.volue,
+          this.addItem.gift = this.resets.gift,
+          this.addItem.address = this.resets.address
+      },
+      updateadd: function() { // 修改页面保存
+          this.showNone = false,
+          this.showNoneUpdate = false
+      },
+      close: function () { // 修改页面取消修改
+          this.showNone = false,
+          this.showNoneUpdate = false,
+          this.showNoneadd = false
+      },
+      remove: function(index) { // 删除
+          this.data6.splice(index, 1);
+      },
+      create: function () {
+          this.showNone = true,
+          this.showNoneadd = true
+      },
+      newadd: function () {
+
+      }
+     }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+.top{margin-top:20px; margin-left: 20px; float:left;}
+.center{float:left; width:100%; margin-top:20px;}
+.bottom{width:100%; float:left; margin-top:15px;}
+.marsk{
+  position: fixed;
+  top: 0;
+  left: 0; 
+  width: 100%;
+  height: 100%;
+  background: #000;
+  opacity: 0.5;
+  z-index: 2999;
+}
+.pop{
+  padding:2% 4%;
+  position: fixed;
+  top: 9%;
+  left: 18%; 
+  width: 60%;
+  height: 80%;
+  background: #fff;
+  z-index: 3001;
+}
+</style>

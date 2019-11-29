@@ -1,0 +1,234 @@
+<template>
+  <div class="content">
+    <silderBar></silderBar>
+    <div class="body_main">
+        <navBar></navBar>
+        <div class="main" :style="widthMain">
+            <div class="tips" id="{this.$route.name}">
+                <Breadcrumb separator="<b class='demo-breadcrumb-separator'>=></b>">
+                    <BreadcrumbItem :to="item.path" v-for="(item,index) in this.$route.meta.index" :key="index">{{item.name}}</BreadcrumbItem>
+                </Breadcrumb>
+            </div>
+            <!-- 查询 新增 -->
+            <div class="top">
+                <Button type="primary" size="small" @click="lookup">开始审核</Button>
+                <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:6px;margin-top:2px; margin-left: 10px;">
+                <Checkbox
+                    :indeterminate="indeterminate"
+                    :value="checkAll"
+                    @click.prevent.native="handleCheckAll">全选</Checkbox>
+                </div>
+                <Button type="primary" size="small" @click="lookup">批量通过</Button>
+                <Button type="primary" size="small" @click="lookup">批量拉黑</Button>
+                <Button type="primary" size="small" @click="lookup">批量踢出</Button>
+            </div>
+            <!-- 主页面内容 -->
+            <div class="center">
+                <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
+                    <Row style="background:#eee;padding:20px">
+                        <Col span="5" style="margin-right:40px; margin-top: 20px;" v-for="item in examine" :key="item.useridx" :label="item.useridx">
+                            <Card :bordered="false">
+                                <p slot="title">Borderless card</p>
+                                <Checkbox :label="item.label"></Checkbox>
+                                <p>Content of card</p>
+                                <p>Content of card</p>
+                                <p>Content of card</p>
+                            </Card>
+                        </Col>
+                    </Row>
+                </CheckboxGroup>
+            </div>
+            <!-- 遮罩层 -->
+            
+            <!-- 分页页面 -->
+            <div class="bottom">
+                <Page :total="100" show-total show-elevator @on-change='fenye'/>
+            </div>
+        </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import {square} from '../../../assets/js/download'
+export default {
+  name: 'Index',
+  data () {
+    return {
+        widthMain:{width:''},//table组件自适应
+        tagData:null,//tag数据
+        colorName:'',//对比的tag名字
+        tagDataLength:true,//可取消的状态
+        
+        indeterminate: false, // 全选按钮状态 -- 未全选
+        checkAll: false, // 全选按钮状态 --全选
+        checkAllGroup: [], // 多选功能数组
+
+        examine: [ // 数据表数据
+            {
+                value: '1',
+                label: '1'
+            },
+            {
+                value: '2',
+                label: '2'
+            },
+            {
+                value: '3',
+                label: '3'
+            },
+            {
+                value: '4',
+                label: '4'
+            },
+            {
+                value: '5',
+                label: '5'
+            }
+        ],
+    }
+  },
+  created() {
+    window.addEventListener('resize', this.getWidth);
+    this.getWidth();
+    this.totlist();
+  },
+  destroyed () {
+    window.removeEventListener('resize', this.getWidth)
+  },
+  mounted () {
+      
+  },
+  computed: {
+      
+  },
+  methods: {
+    //table组件处理函数
+    getWidth:function(){
+            var wid =document.body.clientWidth;        //网页可见区域宽(body)
+                this.widthMain.width=wid-200+'px';
+    },
+    getTag:function(){
+                this.tagData=JSON.parse(localStorage.getItem("g_tagMArry"));
+                this.colorName=this.$route.meta.name;
+    },
+    tagClose:function(item){
+        if(this.tagData.length>1){
+            let arr3 = this.tagData;
+            let arr4 = arr3.filter(item3=>{
+                return item3.name != item.name;     
+            })
+            this.tagData=arr4;
+            localStorage.setItem('g_tagMArry',JSON.stringify(arr4))
+            if(item.name==this.$route.meta.name){
+                    this.$router.push({path: arr4[0].index[2].path});
+                    this.colorName=arr4[0].name;
+            }else{
+            }
+        }else{
+            localStorage.removeItem('g_tagMArry');
+            this.$router.push({path:'/'});
+        }   
+    },
+    tagChange:function(item){
+        this.colorName=item.name;
+        this.$router.push({path: item.index[2].path});
+    },
+    clearAll:function(){
+        let arry =[];
+        arry.push(this.$route.meta);
+        this.tagData=arry;
+        localStorage.setItem('g_tagMArry',JSON.stringify(arry))
+    },
+
+
+    lookup: function () { // 查找
+        console.log(this.query)
+    },
+
+    totlist: function() {
+        let token = localStorage.getItem('h_g_access_token');
+        this.$axios({
+            url: 'BPMService/User/GetVideoWallListAsync',
+            method: 'get',
+            //params 参数必写 , 如果没有参数传{}也可以
+            headers:{
+                Authorization:'Bearer '+token
+            },
+            params:{
+                page: this.page,
+                pagesize: this.pagesize
+            }
+        })
+        .then((res)=>{
+            console.log(res)
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
+    },
+
+    handleCheckAll () { // 全选功能
+                if (this.indeterminate) {
+                    this.checkAll = false;
+                } else {
+                    this.checkAll = !this.checkAll;
+                }
+                this.indeterminate = false;
+
+                if (this.checkAll) {
+                    // this.checkAllGroup = ['1', '2', '3','4','5'];
+                    let that = this;
+                    this.examine.forEach(function(v){that.checkAllGroup.push(v.label);});  // 利用forEach 循环出数组对象中的部分内容，组成新的数组
+                    console.log(that.checkAllGroup)
+                } else {
+                    this.checkAllGroup = [];
+                }
+    },
+
+    checkAllGroupChange (data) { // 选择功能
+                if (data.length === this.examine.length) {
+                    this.indeterminate = false;
+                    this.checkAll = true;
+                } else if (data.length > 0) {
+                    this.indeterminate = true;
+                    this.checkAll = false;
+                } else {
+                    this.indeterminate = false;
+                    this.checkAll = false;
+                }
+    },
+
+    fenye: function (page) { // 页面的分页功能
+        console.log(page)
+    }
+  }
+}
+</script>
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+.main{  // 主页面样式
+    overflow-x: scroll;
+    overflow: hidden;
+    position: relative;
+    .tips{ // 主页面
+        text-align: left;
+    }
+    .top{margin-top:10px; margin-left: 20px; display: flex; padding: 5px; height: 35px;  // 表头部分 查找添加 样式
+          button{
+              margin-left: 15px;
+          }
+          label{
+              margin-left: 10px;
+            // margin-right: 10px;
+              font-size: 15px;
+          }
+    }
+    .center{width:100%; margin-top:20px;
+        button {
+            margin-right: 5px
+        }
+    }  // 页面中部 表格部分样式
+    .bottom{width:100%; margin-top:15px;} // 页面底部 分页部分样式
+}
+</style>

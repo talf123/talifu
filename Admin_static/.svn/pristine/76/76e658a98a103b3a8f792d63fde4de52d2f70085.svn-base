@@ -1,0 +1,29 @@
+<template>
+  <div class="silderBar">
+    silder
+  </div>
+</template>
+
+<script>
+
+
+  export default {
+    name: 'login',
+    data() {
+      return {
+      
+      }
+    },
+    created () {
+      
+    },
+    methods: {
+
+    }
+     
+  }
+</script>
+
+<style scoped>
+  
+</style>

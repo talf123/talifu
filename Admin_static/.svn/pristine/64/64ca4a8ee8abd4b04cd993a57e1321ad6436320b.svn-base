@@ -1,0 +1,63 @@
+<template>
+  <div class="tag">
+        <div class="tips" id="" style="background:#cecece;text-align:left;">
+            <Tag v-for="(item,index) in tagData" :key="index" :name="item.name" type="dot" closable checkable :color="item.name==colorName?'primary':'default'" @on-close="tagClose(item)" @on-change="tagChange(item)">{{item.index[2].name}}</Tag>
+        </div>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: 'login',
+    data() {
+      return {
+        tagData:null,//tag数据
+        colorName:'',//对比的tag名字
+      }
+    },
+    created () {
+      this.getTag();
+    },
+    computed: {
+    
+    },
+    methods: {
+      getTag:function(){
+          this.tagData=JSON.parse(localStorage.getItem("g_tagMArry"));
+          this.colorName=this.$route.meta.name;
+      },
+      tagClose:function(item){
+          let arr3 = this.tagData;
+          let arr4 = arr3.filter(item3=>{
+                return item3.name != item.name;     
+        })
+        this.tagData=arr4;
+        localStorage.setItem('g_tagMArry',JSON.stringify(arr4))
+        if(item.name==this.$route.meta.name){
+            if(arr4.length>0){
+                this.$router.push({path: arr4[0].index[2].path});
+                this.colorName=arr4[0].name;
+            }
+            
+        }else{
+        }
+      },
+      tagChange:function(item){
+        this.colorName=item.name;
+        this.$router.push({path: item.index[2].path});
+      },
+
+    }
+     
+  }
+</script>
+
+<style scoped lang="scss">
+.tag{
+    // height: 36px;
+    overflow-x:scroll;
+    .tips{
+
+    }
+}
+</style>

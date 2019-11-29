@@ -1,0 +1,118 @@
+<template>
+  <div class="navBar">
+      <div class="left" v-if="firstpage==true">
+          <!-- <img src="../../assets/img/loginlogo.png" alt="">
+          <em>喵播管理后台</em> -->
+          <Breadcrumb separator="<b class='demo-breadcrumb-separator'>=></b>">
+              <BreadcrumbItem :to="item.path" v-for="(item,index) in this.$route.meta.index" :key="index">{{item.name}}</BreadcrumbItem>
+          </Breadcrumb>
+      </div>
+      <div class="left" v-else>
+         <b>首页</b>
+      </div>
+      <div class="right">
+          <em>Welcome：Admin</em>
+          <svg-icon icon-class="sangeheng_white" @mouseenter="goEnter2" v-if="showEnter2"></svg-icon>
+          <svg-icon icon-class="sangeheng_black" @mouseleave="goOut2" v-else @click="goHome"></svg-icon>
+          <svg-icon icon-class="dianyuan_white" @mouseenter="goEnter1" v-if="showEnter1"></svg-icon>
+          <svg-icon icon-class="dianyuan_black" @mouseleave="goOut1" v-else @click="signOut"></svg-icon>
+
+      </div>
+  </div>
+</template>
+
+<script>
+
+
+  export default {
+    name: 'login',
+    data() {
+      return {
+        showEnter1:true,
+        showEnter2:true,
+        firstpage:true,
+      }
+    },
+    created () {
+      this.getFist()
+    },
+    methods: {
+      getFist:function(){
+        if(this.$route.meta.name=='首页'){
+          this.firstpage=false;
+          // console.log(1)
+        }else{
+          // console.log(2)
+        }
+        // console.log(this.$route.meta)
+      },
+      //home页面以及退出
+      goEnter1:function(){
+        this.showEnter1=false;
+      },
+      goOut1:function(){
+        this.showEnter1=true;
+      },
+      goEnter2:function(){
+        this.showEnter2=false;
+      },
+      goOut2:function(){
+        this.showEnter2=true;
+      },
+      goHome:function(){
+        // alert(1)
+        this.$router.push('/')
+      },
+      signOut:function(){
+        // alert(2)
+        this.$router.push('/login')
+      },
+
+    }
+     
+  }
+</script>
+
+<style scoped lang="scss">
+.navBar{
+  background-image: linear-gradient(43deg, #003DAC 0%, #0044BC 28%, #006EDF 76%, #007FF0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .left{
+    background: #fff;
+    padding:0 15px;
+    height: 65%;
+    line-height: 40px;
+    position: relative;
+    top: 7px;
+    border-radius: 0 560px 90px 0;
+    img{
+      height: 34px;
+    }
+    em{
+      line-height: 34px;
+      font-size: 22px;
+      color:#fff;
+    }
+
+  }
+  .right{
+    margin-right: 15px;
+    .svg-icon{
+      height: 20px;
+      width:20px;
+      margin:0 5px;
+      cursor: pointer;
+      position: relative;
+      top:2px;
+    }
+    em{
+      line-height: 20px;
+      font-size: 16px;
+      color:#fff;
+    }
+
+  }
+}
+</style>

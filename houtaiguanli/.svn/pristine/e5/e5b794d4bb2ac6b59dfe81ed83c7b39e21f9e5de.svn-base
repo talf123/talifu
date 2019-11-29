@@ -1,0 +1,67 @@
+<template> 
+    <div class="main">
+        
+    </div>
+</template>
+<script>
+  export default {
+    data() {
+      return {
+        
+      }
+    },
+    created() {
+
+    },
+    watch: {
+      
+    },
+    filters: {
+      
+    },
+    methods: {
+     
+    }
+  }
+</script>
+<style>
+
+
+/* .block2{
+  text-align:right;
+} */
+.block_fenye{
+  padding-left: 30px;
+  padding-right: 30px;
+}
+.block_fenye .el-pagination__sizes{
+  margin-right:450px;
+}
+.main{
+    /* flex: 1; */
+    position: relative;
+    /* overflow: scroll; */
+}
+.marsk{
+  position: absolute;
+  top: 0;
+  left: 0; 
+  width: 100%;
+  height: 150%;
+  background: #000;
+  opacity: 0.5;
+  z-index: 9999;
+}
+.pop{
+  padding:2% 4%;
+  position: absolute;
+  top: 9%;
+  left: 18%; 
+  width: 60%;
+  height: 80%;
+  background: #fff;
+  z-index: 10000;
+}
+</style>
+
+

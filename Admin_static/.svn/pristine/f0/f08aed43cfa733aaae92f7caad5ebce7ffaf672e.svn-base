@@ -1,0 +1,256 @@
+import Vue from 'vue'
+import Router from 'vue-router'
+import HelloWorld from '@/components/pages/HelloWorld'
+import Error from '@/components/pages/Error'
+import Login from '@/components/pages/Login'
+import Index from '@/components/pages/Index'
+import Activity from '@/components/pages/Activity'
+import College from '@/components/pages/College'
+import System from '@/components/pages/System.vue'
+import Power from '@/components/pages/Power.vue'
+import Add from '@/components/pages/Add.vue'
+import Up from '@/components/pages/Up.vue'//页面
+//房间管理 --->>14
+import PaymentMenu from '@/components/pages/room/PaymentMenu.vue'//支付菜单
+import HostLength from '@/components/pages/room/HostLength.vue'//主播时长查询
+import Supervisor from '@/components/pages/room/Supervisor.vue'//室主管理 
+import HotListAdvertising from '@/components/pages/room/HotListAdvertising.vue'//热门列表广告管理 
+import Advertising from '@/components/pages/room/Advertising.vue'//广告管理 
+import HotHostList from '@/components/pages/room/HotHostList.vue'//热门主播列表 
+import HostlevelRecommendation from '@/components/pages/room/HostlevelRecommendation.vue'//主播一级推荐 
+import GiftHotPush from '@/components/pages/room/GiftHotPush.vue'//礼物热推管理 
+import HostLevel2Recommendation from '@/components/pages/room/HostLevel2Recommendation.vue'//主播二级推荐 
+import RoomHangUp from '@/components/pages/room/RoomHangUp.vue'//房间挂机查询 
+import TitleOfWheat from '@/components/pages/room/TitleOfWheat.vue'//封号封麦 
+import UserLiveVideo from '@/components/pages/room/UserLiveVideo.vue'//用户直播视频流 
+import RoomDeletion from '@/components/pages/room/RoomDeletion.vue'//房间管理删除 
+import UserRoomServer from '@/components/pages/room/UserRoomServer.vue'//用户房间服务器 
+//用户管理 --->>
+
+
+Vue.use(Router)
+
+const router= new Router({
+  // mode:'history',
+  routes: [
+    {
+      path:'*',
+      component:Error
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
+    },
+    {
+      path: '/',
+      name: 'HelloWorld',
+      component: HelloWorld
+    },
+    {
+      path: '/paymentmenu',
+      name: 'PaymentMenu',
+      component: PaymentMenu,
+      meta:{
+        name:'首页/房间管理/支付菜单',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'支付菜单',path:'/paymentmenu'},]
+      }
+    },
+    {
+      path: '/hostlength',
+      name: 'HostLength',
+      component: HostLength,
+      meta:{
+        name:'首页/房间管理/主播时长查询',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'主播时长查询',path:'/hostlength'},]
+      }
+    },
+    {
+      path: '/supervisor',
+      name: 'Supervisor',
+      component: Supervisor,
+      meta:{
+        name:'首页/房间管理/室主管理',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'室主管理',path:'/supervisor'},]
+      }
+    },
+    {
+      path: '/hotListadvertising',
+      name: 'HotListAdvertising',
+      component: HotListAdvertising,
+      meta:{
+        name:'首页/房间管理/热门列表广告管理',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'热门列表广告管理',path:'/hotListadvertising'},]
+      }
+    },
+    {
+      path: '/advertising',
+      name: 'Advertising',
+      component: Advertising,
+      meta:{
+        name:'首页/房间管理/广告管理',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'广告管理',path:'/advertising'},]
+      }
+    },
+    {
+      path: '/hothostlist',
+      name: 'HotHostList',
+      component: HotHostList,
+      meta:{
+        name:'首页/房间管理/热门主播列表',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'热门主播列表',path:'/hothostlist'},]
+      }
+    },
+    {
+      path: '/hostlevelrecommendation',
+      name: 'HostlevelRecommendation',
+      component: HostlevelRecommendation,
+      meta:{
+        name:'首页/房间管理/主播一级推荐',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'主播一级推荐',path:'/hostlevelrecommendation'},]
+      }
+    },
+    {
+      path: '/gifthotpush',
+      name: 'GiftHotPush',
+      component: GiftHotPush,
+      meta:{
+        name:'首页/房间管理/礼物热推管理',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'礼物热推管理',path:'/gifthotpush'},]
+      }
+    },
+    {
+      path: '/hostlevel2recommendation',
+      name: 'HostLevel2Recommendation',
+      component: HostLevel2Recommendation,
+      meta:{
+        name:'首页/房间管理/主播二级推荐',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'主播二级推荐',path:'/hostlevel2recommendation'},]
+      }
+    },
+    {
+      path: '/roomhangup',
+      name: 'RoomHangUp',
+      component: RoomHangUp,
+      meta:{
+        name:'首页/房间管理/房间挂机查询',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'房间挂机查询',path:'/roomhangup'},]
+      }
+    },
+    {
+      path: '/titleofwheat',
+      name: 'TitleOfWheat',
+      component: TitleOfWheat,
+      meta:{
+        name:'首页/房间管理/封号封麦',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'封号封麦',path:'/titleofwheat'},]
+      }
+    },
+    {
+      path: '/userlivevideo',
+      name: 'UserLiveVideo',
+      component: UserLiveVideo,
+      meta:{
+        name:'首页/房间管理/用户直播视频流',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'用户直播视频流',path:'/userlivevideo'},]
+      }
+    },
+    {
+      path: '/roomdeletion',
+      name: 'RoomDeletion',
+      component: RoomDeletion,
+      meta:{
+        name:'首页/房间管理/房间管理删除',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'房间管理删除',path:'/roomdeletion'},]
+      }
+    },
+    {
+      path: '/userroomserver',
+      name: 'UserRoomServer',
+      component: UserRoomServer,
+      meta:{
+        name:'首页/房间管理/用户房间服务器',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'用户房间服务器',path:'/userroomserver'},]
+      }
+    },
+
+
+
+
+
+
+    {
+      path: '/activity',
+      name: 'Activity',
+      component: Activity
+    },
+    {
+      path: '/index',
+      name: 'Index',
+      component: Index
+    },
+    {
+      path: '/college',
+      name: 'College',
+      component: College
+    },
+    {
+      path: '/system',
+      name: 'System',
+      component: System
+    },
+    {
+      path: '/power',
+      name: 'Power',
+      component: Power,
+      meta:{
+        name:'首页/房间管理/下载',
+        title:[{name:'首页',path:'/'},{name:'房间管理',path:''},{name:'power页面',path:'/power'}]
+      }
+    },
+    {
+      path: '/add',
+      name: 'Add',
+      component: Add,
+      meta:{
+        name:'首页/房间管理/下载',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:'/'},{name:'power页面',path:'/power'},]
+      }
+    },
+    {
+      path: '/up',
+      name: 'Up',
+      component: Up,
+      meta:{
+        name:'首页/房间管理/下载',
+        index:[{name:'首页',path:'/'},{name:'房间管理',path:'/'},{name:'power页面',path:'/power'},]
+      }
+    },
+  ]
+})
+
+// 全局路由守卫
+router.beforeEach((to, from, next) => {
+  // console.log('navigation-guards');
+  // to: Route: 即将要进入的目标 路由对象
+  // from: Route: 当前导航正要离开的路由
+  // next: Function: 一定要调用该方法来 resolve 这个钩子。执行效果依赖 next 方法的调用参数。
+  const nextRoute = ['Activity'];
+  let isLogin=localStorage.getItem("g_userName1");// 是否登录
+  console.log(isLogin);
+  // 未登录状态；当路由到nextRoute指定页时，跳转至login
+  if (nextRoute.indexOf(to.name) >= 0) { 
+    if (isLogin==null) {
+      console.log('what fuck');
+      router.push({ name: 'Login' })
+    }
+  }
+  // 已登录状态；当路由到login时，跳转至home
+  if (to.name === 'Login') {
+    if (isLogin) {
+      router.push({ name: 'HelloWorld' });
+    }
+  }
+  next();
+});
+export default router
